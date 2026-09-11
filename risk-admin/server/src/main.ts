@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { Controller, Get, NestFactory } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
+import { Controller, Get, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -38,7 +38,7 @@ async function bootstrap() {
     // 写文件：防止 stdout 被截断时丢日志
     try {
       const fs = await import('fs');
-      fs.writeFileSync('/tmp/boot-error.log', `[${new Date().toISOString()}] ${err?.stack || err}\n`);
+      fs.writeFileSync('/tmp/boot-error.log', `[${new Date().toISOString()}] ${(err as any)?.stack || String(err)}\n`);
     } catch {}
     process.exit(1);
   }
