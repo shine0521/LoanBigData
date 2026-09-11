@@ -1,6 +1,6 @@
 /**
  * WebSocket Hook（socket.io-client）
- * 连接 ws://localhost:3000/ws/admin/notify
+ * 连接 /ws/admin/notify
  * 监听 h5.submit.new 事件，收到后触发页面刷新
  */
 import { onMounted, onUnmounted } from 'vue'
@@ -19,7 +19,8 @@ export function useWebSocket() {
 
   function connect() {
     // socket.io v4：namespace 直接写在 URL 中
-    const socketUrl = 'http://localhost:3000'
+    // 生产/本地同源：PC 站点由 nginx 反代 /socket.io 到后端 API，无需写死地址
+    const socketUrl = window.location.origin
     socket = io(`${socketUrl}/ws/admin/notify`, {
       reconnection: true,
       reconnectionDelay: 3000,

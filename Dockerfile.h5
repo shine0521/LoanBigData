@@ -1,0 +1,18 @@
+# 风险评分系统 - H5 用户端 (Vue3 + Vite 静态站点)
+# 适用：腾讯云 CloudBase Run 容器部署（nginx 托管静态 + 反代 /api 到后端）
+# build context: 仓库根目录（CloudBase Run「Dockerfile 名称」填 ./Dockerfile.h5）
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY risk-score-h5/package*.json ./
+RUN npm ci
+COPY risk-score-h5/ ./
+RUN npm run build
+# 构建产物在 /app/dist
+
+FROM nginx:1.27-alpine
+# nginx 官方镜像启动时会自动把 /etc/nginx/templates/*.template 用环境变量渲染到 /etc/nginx/conf.d/
+# 这里用 ${API_TARGET} 注入后端地址（CloudBase Run 控制台环境变量配置）
+COPY risk-score-h5/nginx-default.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

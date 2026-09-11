@@ -1,0 +1,16 @@
+# 风险评分系统 - PC 管理后台 (Vue3 + Vite 静态站点)
+# 适用：腾讯云 CloudBase Run 容器部署（nginx 托管静态 + 反代 /api 和 /socket.io 到后端）
+# build context: 仓库根目录（CloudBase Run「Dockerfile 名称」填 ./Dockerfile.pc）
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY risk-admin/web/package*.json ./
+RUN npm ci
+COPY risk-admin/web/ ./
+RUN npm run build
+# 构建产物在 /app/dist
+
+FROM nginx:1.27-alpine
+COPY risk-admin/web/nginx-default.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

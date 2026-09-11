@@ -1,0 +1,20 @@
+# 风险评分系统 - 后端 API (NestJS + TypeORM + MySQL)
+# 适用：腾讯云 CloudBase Run 容器部署
+# build context: 仓库根目录（CloudBase Run 部署时「服务路径」留空，「Dockerfile 名称」填 ./Dockerfile.api）
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY risk-admin/server/package*.json ./
+RUN npm ci
+COPY risk-admin/server/ ./
+RUN npm run build
+# 仅保留生产依赖
+RUN rm -rf node_modules && npm ci --omit=dev
+
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+# 注意：.env 不入库；CloudBase Run 控制台「环境变量」中注入（见 .env.production.example）
+EXPOSE 3000
+CMD ["node", "dist/main"]
