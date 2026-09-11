@@ -1,0 +1,42 @@
+version: "3.8"
+
+# 风险评分系统 — 基础设施编排
+# 仅启动 MySQL 与 Redis；三个应用服务（backend / h5 / web）开发期在本机 npm run dev 启动。
+# 如需容器化部署，请参考各子目录 README 中的 Dockerfile 说明。
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: risk-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: risk123456
+      MYSQL_DATABASE: risk_score
+      TYSQL_CHARSET: utf8mb4
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d   # 放入 db-schema.sql 可自动建表
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: risk-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mysql-data:
+  redis-data:
