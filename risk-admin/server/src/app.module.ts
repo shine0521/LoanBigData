@@ -47,7 +47,7 @@ const dbConfig = useSqljs
         OperationLog,
         SysDict,
       ],
-      synchronize: true,
+      synchronize: false, // sqljs 也保持 false，避免启动时差异同步
     }
   : {
       type: 'mysql' as const,
@@ -57,7 +57,7 @@ const dbConfig = useSqljs
       password: process.env.DB_PASSWORD || '',
       database: process.env.DB_DATABASE || 'risk_admin',
       charset: 'utf8mb4',
-      synchronize: true,
+      synchronize: false, // 生产环境禁用 synchronize（与手工建表冲突，会 DROP/ALTER）
       entities: [
         AdminUser,
         Customer,

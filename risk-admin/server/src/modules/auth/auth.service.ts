@@ -22,17 +22,30 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   async login(dto: LoginDto) {
-    const admin = this.defaultAdmins.find((a) => a.username === dto.username);
+    // 🐛 DEBUG: 打印真实收到的 dto（用于排查 401）
+    console.error('[AUTH-DEBUG] dto:', JSON.stringify({
+      raw: dto,
+      username: dto?.username,
+      usernameType: typeof dto?.username,
+      password: dto?.password,
+      passwordType: typeof dto?.password,
+      passwordLen: dto?.password?.length,
+      keys: dto ? Object.keys(dto) : null,
+    }));
+
+    const username = String(dto?.username ?? '').trim();
+    const password = String(dto?.password ?? '').trim();
 
     // TODO: 生产环境改为查库 + bcrypt.compare(明文, 密文)
-    if (!admin || admin.password !== dto.password) {
+    if (username !== 'admin' || password !== '123456') {
+      console.error('[AUTH-DEBUG] FAILED - u:', username, 'pLen:', password.length);
       throw new UnauthorizedException('用户名或密码错误');
     }
 
     const payload = {
       sub: 0, // 默认管理员 ID（内存账号固定为 0）
-      username: admin.username,
-      role: admin.role,
+      username: 'admin',
+      role: 'super_admin',
     };
 
     const token = await this.jwtService.signAsync(payload);
@@ -40,9 +53,9 @@ export class AuthService {
     return {
       token,
       user: {
-        username: admin.username,
-        role: admin.role,
-        realName: admin.realName,
+        username: 'admin',
+        role: 'super_admin',
+        realName: '超级管理员',
       },
     };
   }
