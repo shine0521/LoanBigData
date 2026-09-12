@@ -1,67 +1,49 @@
 <!--
-  InputPage.vue - 重设计 v3
+  InputPage.vue - v4 照着图2重设计
   ─────────────────────────────────────
-  设计目标（UI 设计师视角）：
-  1. 填满整个 viewport，无空白蓝渐变
-  2. 蓝色渐变 hero + 浮起白卡 + 底部功能区 + footer
-  3. 大字标题 + 居中布局 + 强视觉层级
-  4. 移动端 60px 输入/按钮（黄金 tap target）
-  5. 勾选框用原生 label 包裹，零 bug
-  6. 真实可信的产品感（功能卡片+备案+版权）
+  核心要求：
+  1. 撑满整宽（width:100% + 左右小边距），不要 max-width 限制
+  2. 巨大标题（1.5rem+）居中显示
+  3. 简洁：移除装饰（数据条/3列功能/footer/浮动装饰）
+  4. 居中：所有元素垂直居中分布
+  5. 勾选框 100% 可勾（label 包裹 + @click 主动 toggle）
   ─────────────────────────────────────
 -->
 <template>
   <div class="page">
 
-    <!-- ============ Hero ============ -->
+    <!-- ============ Hero（只保留标题） ============ -->
     <header class="hero">
-      <DecorationBg />
-
-      <!-- 安全徽章 -->
+      <!-- 安全徽章（椭圆框 + 盾形） -->
       <div class="hero-badge">
-        <span class="badge-dot"><AppIcon name="shield" color="#fff" size="0.42rem" /></span>
+        <span class="badge-dot">
+          <AppIcon name="shield" color="#fff" size="0.42rem" />
+        </span>
         <span class="badge-text">银行级安全加密 · 权威认证</span>
       </div>
 
-      <!-- 主标题区 -->
-      <div class="hero-titles">
-        <h1 class="title-main">银行评分大数据</h1>
-        <h1 class="title-accent">专业查询</h1>
-        <div class="title-underline"><i /></div>
-        <p class="title-sub">全面 · 精准 · 银行级安全</p>
-      </div>
-
-      <!-- 数据条 -->
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-num">5<span>+</span></div>
-          <div class="stat-label">合作银行</div>
-        </div>
-        <div class="stat-sep" />
-        <div class="stat">
-          <div class="stat-num">10<span>s</span></div>
-          <div class="stat-label">极速出分</div>
-        </div>
-        <div class="stat-sep" />
-        <div class="stat">
-          <div class="stat-num">99.9<span>%</span></div>
-          <div class="stat-label">数据准确</div>
-        </div>
-      </div>
+      <!-- 巨大标题 -->
+      <h1 class="title-main">银行评分大数据</h1>
+      <h2 class="title-sub">专业查询</h2>
     </header>
 
-    <!-- ============ 表单卡 ============ -->
+    <!-- ============ 表单卡（撑满整宽） ============ -->
     <section class="card">
+
       <!-- 提示条 -->
       <div class="tip-bar">
-        <span class="tip-icon"><AppIcon name="bell" color="#4A90E2" size="0.48rem" /></span>
+        <span class="tip-icon">
+          <AppIcon name="bell" color="#4A90E2" size="0.48rem" />
+        </span>
         <span class="tip-text">为保证数据准确，请输入真实信息</span>
       </div>
 
       <!-- 输入项 -->
       <div class="fields">
         <div class="field" :class="{ active: focusField === 'name' }">
-          <span class="field-icon"><AppIcon name="user" color="#4A90E2" size="0.56rem" /></span>
+          <span class="field-icon">
+            <AppIcon name="user" color="#4A90E2" size="0.56rem" />
+          </span>
           <input
             v-model="form.name"
             class="field-input"
@@ -71,8 +53,11 @@
             @blur="focusField = ''"
           />
         </div>
+
         <div class="field" :class="{ active: focusField === 'idCard' }">
-          <span class="field-icon"><AppIcon name="idcard" color="#4A90E2" size="0.56rem" /></span>
+          <span class="field-icon">
+            <AppIcon name="idcard" color="#4A90E2" size="0.56rem" />
+          </span>
           <input
             v-model="form.idCard"
             class="field-input"
@@ -83,8 +68,11 @@
             @blur="focusField = ''"
           />
         </div>
+
         <div class="field" :class="{ active: focusField === 'phone' }">
-          <span class="field-icon"><AppIcon name="phone" color="#4A90E2" size="0.56rem" /></span>
+          <span class="field-icon">
+            <AppIcon name="phone" color="#4A90E2" size="0.56rem" />
+          </span>
           <input
             v-model="form.phone"
             class="field-input"
@@ -97,17 +85,31 @@
         </div>
       </div>
 
-      <!-- 友情提示 -->
+      <!-- 警告 + 友情提示（橙底渐变） -->
       <div class="warning">
-        <div class="warning-title">
-          <span class="warning-icon"><AppIcon name="info" color="#C2580E" size="0.5rem" /></span>
-          <span>友情提示</span>
+        <div class="warning-row">
+          <span class="warning-icon">
+            <AppIcon name="warning" color="#C2580E" size="0.5rem" />
+          </span>
+          <span class="warning-text">本人对查询输入的三要素的真实性负责，如有虚假，愿意承担由此产生的一切后果！</span>
         </div>
-        <p>我司不是提供央行征信和个人爬虫等隐私数据查询，也不提供贷款及信用修复业务。</p>
-        <p class="warning-emph">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
+        <div class="warning-row">
+          <span class="warning-icon">
+            <AppIcon name="warning" color="#C2580E" size="0.5rem" />
+          </span>
+          <span class="warning-text">请务必输入查询人实名手机号，查询的非公开结果以手机号为准。</span>
+        </div>
+        <p class="warning-note">1.本报告不涉及金融场景的应用。</p>
       </div>
 
-      <!-- 协议（不使用 v-model，改用 :checked + @click，主动 toggle，零事件依赖） -->
+      <!-- 友情提示（橙底） -->
+      <div class="tip-orange">
+        <p class="tip-orange-title">友情提示：</p>
+        <p>我司不是提供央行征信和个人爬虫等隐私数据查询，也不提供贷款及信用修复业务。</p>
+        <p class="tip-orange-emph">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
+      </div>
+
+      <!-- 协议（label 包裹 + @click 主动 toggle，零事件依赖） -->
       <label class="agreement">
         <input
           type="checkbox"
@@ -121,7 +123,7 @@
           <a class="agreement-link" @click.prevent.stop="openAgreement('user')">《用户协议》</a>
           <a class="agreement-link" @click.prevent.stop="openAgreement('privacy')">《隐私政策》</a>
           <a class="agreement-link" @click.prevent.stop="openAgreement('auth')">《授权书》</a>
-          ，点击勾选即代表您同意上述法律文书相关条款。
+          ，点击勾选即代表您同意上述法律文书的相关条款并签署上述法律文书。
         </span>
       </label>
 
@@ -132,66 +134,9 @@
         :disabled="!canSubmit"
         @click="handleSubmit"
       >
-        <span class="submit-shine" />
         <span class="submit-text">立 即 查 询</span>
-        <span class="submit-arrow"><AppIcon name="arrowRight" color="#fff" size="0.5rem" /></span>
       </button>
-
-      <!-- 卡内信任条 -->
-      <div class="trust">
-        <span class="trust-item">
-          <AppIcon name="lock" color="#9AAAC2" size="0.36rem" />
-          <span>信息加密</span>
-        </span>
-        <span class="trust-sep">·</span>
-        <span class="trust-item">
-          <AppIcon name="shield" color="#9AAAC2" size="0.36rem" />
-          <span>隐私保护</span>
-        </span>
-        <span class="trust-sep">·</span>
-        <span class="trust-item">
-          <AppIcon name="database" color="#9AAAC2" size="0.36rem" />
-          <span>银行数据</span>
-        </span>
-      </div>
     </section>
-
-    <!-- ============ 核心优势 3 列 ============ -->
-    <section class="features">
-      <div class="feature">
-        <div class="feature-icon icon-blue">
-          <AppIcon name="bolt" color="#fff" size="0.6rem" />
-        </div>
-        <div class="feature-title">10秒极速</div>
-        <div class="feature-desc">智能引擎秒级响应<br />无需漫长等待</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon icon-purple">
-          <AppIcon name="shield" color="#fff" size="0.6rem" />
-        </div>
-        <div class="feature-title">银行级安全</div>
-        <div class="feature-desc">金融级数据加密<br />全程隐私保护</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon icon-cyan">
-          <AppIcon name="database" color="#fff" size="0.6rem" />
-        </div>
-        <div class="feature-title">5+银行数据</div>
-        <div class="feature-desc">覆盖主流商业银行<br />数据真实可靠</div>
-      </div>
-    </section>
-
-    <!-- ============ Footer ============ -->
-    <footer class="footer">
-      <div class="footer-links">
-        <a class="footer-link" @click="showToast('客服电话：400-888-8888')">在线客服</a>
-        <span class="footer-sep">|</span>
-        <a class="footer-link" @click="openAgreement('user')">用户协议</a>
-        <span class="footer-sep">|</span>
-        <a class="footer-link" @click="openAgreement('privacy')">隐私政策</a>
-      </div>
-      <p class="footer-copy">© 2026 银行评分大数据 · 京ICP备XXXXXXXX号</p>
-    </footer>
 
     <!-- ============ 协议弹窗 ============ -->
     <div v-if="popupType" class="popup-mask" @click.self="popupType = ''">
@@ -227,7 +172,6 @@ import {
   validatePhone,
 } from '@/utils/validators'
 import AppIcon from '@/components/icons/AppIcons.vue'
-import DecorationBg from '@/components/DecorationBg.vue'
 
 const router = useRouter()
 const store = useRiskStore()
@@ -246,7 +190,11 @@ const canSubmit = computed(() => {
 })
 
 const popupType = ref<'' | 'user' | 'privacy' | 'auth'>('')
-const popupTitleMap: Record<string, string> = { user: '用户协议', privacy: '隐私政策', auth: '授权书' }
+const popupTitleMap: Record<string, string> = {
+  user: '用户协议',
+  privacy: '隐私政策',
+  auth: '授权书',
+}
 const popupContentMap: Record<string, string> = {
   user: '本协议是您与本平台之间关于使用本服务所订立的协议。请仔细阅读。',
   privacy: '我们重视您的隐私，会严格保护您提交的个人信息安全。',
@@ -254,7 +202,9 @@ const popupContentMap: Record<string, string> = {
 }
 const popupTitle = computed(() => (popupType.value ? popupTitleMap[popupType.value] : ''))
 const popupContent = computed(() => (popupType.value ? popupContentMap[popupType.value] : ''))
-function openAgreement(type: 'user' | 'privacy' | 'auth') { popupType.value = type }
+function openAgreement(type: 'user' | 'privacy' | 'auth') {
+  popupType.value = type
+}
 
 function handleSubmit() {
   if (!validateName(form.name)) return showToast('请检查姓名输入')
@@ -272,11 +222,10 @@ function showToast(msg: string, duration = 2500) {
   setTimeout(() => { toastMsg.value = '' }, duration)
 }
 
-// 协议勾选：不依赖原生 change 事件，@click 主动 toggle 最稳妥
+// 协议勾选：@click 主动 toggle，完全不依赖 change 事件
 function toggleAgreement(e: Event) {
   const target = e.target as HTMLInputElement | null
   if (target) {
-    // 用浏览器翻转后的 checked 作为真值（click 事件后 native 已翻）
     agreed.value = target.checked
   } else {
     agreed.value = !agreed.value
@@ -288,199 +237,101 @@ function toggleAgreement(e: Event) {
 @use '@/assets/styles/variables.scss' as *;
 
 // =============================================================
-// 根容器：填满 viewport + 蓝色渐变背景
+// 根容器：撑满整宽（width:100%），所有元素居中
 // =============================================================
 .page {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 18%, #A8B6F0 38%, #E8EEFB 58%, #F4F7FC 100%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 18%, #A8B6F0 38%, #E8EEFB 58%, #F4F7FC 80%, #F8FAFD 100%);
-  overflow-x: hidden;
+  align-items: center;          // 子元素水平居中
   padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: hidden;
 }
 
 // =============================================================
-// Hero 区（约 30% viewport）
+// Hero：巨大标题（占顶部 ~28vh）
 // =============================================================
 .hero {
-  position: relative;
   width: 100%;
-  max-width: 10rem;
-  padding: 1.4rem $spacing-md 1.6rem;
+  padding: 0.8rem $spacing-md 0.6rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: $spacing-sm;
-  color: #fff;
-  z-index: 1;
+  align-items: center;          // 水平居中
+  text-align: center;
+  flex-shrink: 0;
 }
 
-// 徽章
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.16rem;
-  padding: 0.16rem 0.48rem 0.16rem 0.2rem;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0.18rem 0.4rem 0.18rem 0.2rem;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: $radius-full;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0.32rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .badge-dot {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.4);
+  width: 0.48rem;
+  height: 0.48rem;
+  background: #4A90E2;
+  border-radius: $radius-full;
 }
 
 .badge-text {
-  font-size: $font-size-xs;
+  font-size: 0.32rem;
+  color: #fff;
   font-weight: 600;
   letter-spacing: 0.04em;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
 }
 
-// 主标题
-.hero-titles {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-top: 0.16rem;
-}
-
+// 巨大主标题（占整宽，居中显示）
+// 用 clamp(vw自适应)：320px屏 ~41px，375px屏 ~48px，414px屏 ~54px
 .title-main {
-  font-size: 1.067rem;   // 40px
+  width: 100%;
+  font-size: clamp(0.95rem, 13vw, 1.4rem);
   font-weight: 900;
-  line-height: 1.15;
-  margin: 0;
+  color: #fff;
+  line-height: 1.1;
   letter-spacing: 0.04em;
-  background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(74, 144, 226, 0.4));
-}
-
-.title-accent {
-  font-size: 1.2rem;     // 45px
-  font-weight: 900;
-  line-height: 1.15;
   margin: 0;
-  letter-spacing: 0.08em;
-  background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(74, 144, 226, 0.4));
-}
-
-.title-underline {
-  position: relative;
-  width: 1.6rem;
-  height: 0.08rem;
-  margin: 0.16rem 0;
-  background: linear-gradient(90deg, transparent 0%, #fff 50%, transparent 100%);
-  border-radius: 2px;
-
-  i {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 0.16rem;
-    height: 0.16rem;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-  }
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .title-sub {
-  font-size: $font-size-xs;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0;
-  letter-spacing: 0.16em;
-  font-weight: 500;
-}
-
-// 数据条
-.stats {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   width: 100%;
-  max-width: 8rem;
-  margin-top: $spacing-sm;
-  padding: 0.24rem $spacing-md;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 0.32rem;
-}
-
-.stat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.04rem;
-}
-
-.stat-num {
-  font-size: $font-size-lg;
-  font-weight: 800;
+  font-size: clamp(0.95rem, 13vw, 1.4rem);
+  font-weight: 900;
   color: #fff;
-  line-height: 1.2;
-
-  span {
-    font-size: $font-size-xs;
-    font-weight: 500;
-    opacity: 0.9;
-    margin-left: 0.04rem;
-  }
-}
-
-.stat-label {
-  font-size: 0.28rem;   // 10.5px
-  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.1;
   letter-spacing: 0.04em;
-}
-
-.stat-sep {
-  width: 1px;
-  height: 0.56rem;
-  background: rgba(255, 255, 255, 0.3);
-  margin: 0 $spacing-xs;
+  margin: 0.08rem 0 0 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 // =============================================================
-// 表单卡（白底，向上浮）
+// 表单卡：撑满整宽（不要 max-width）
 // =============================================================
 .card {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 10rem;
-  margin: -0.4rem $spacing-md 0;
-  padding: $spacing-md;
+  width: 100%;                  // 撑满
+  margin: 0.32rem $spacing-md 0; // 左右只留边距
+  padding: 0.48rem 0.32rem 0.4rem;
   background: #fff;
   border-radius: 0.48rem;
   box-shadow:
-    0 12px 32px rgba(74, 100, 180, 0.18),
-    0 4px 8px rgba(74, 100, 180, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    0 16px 40px rgba(74, 100, 180, 0.18),
+    0 4px 8px rgba(74, 100, 180, 0.08);
+  flex-shrink: 0;
 }
 
 // 提示条
@@ -489,42 +340,47 @@ function toggleAgreement(e: Event) {
   align-items: center;
   justify-content: center;
   gap: 0.16rem;
-  padding: $spacing-xs 0 $spacing-md;
+  padding-bottom: 0.32rem;
+  border-bottom: 1px solid $color-border-light;
+  margin-bottom: 0.32rem;
 }
 
 .tip-icon {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tip-text {
-  font-size: $font-size-sm;
-  color: #4A90E2;
-  font-weight: 600;
+  font-size: 0.36rem;
+  color: #1A1A1A;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
-// 输入项（60px 大 tap target）
+// =============================================================
+// 输入框（60-65px 高）
+// =============================================================
 .fields {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: 0.24rem;
 }
 
 .field {
   display: flex;
   align-items: center;
-  gap: 0.24rem;
-  height: 1.6rem;       // 60px
-  padding: 0 $spacing-md;
+  height: 1.6rem;               // 60px
+  padding: 0 0.32rem;
   background: #F4F7FC;
   border: 1.5px solid transparent;
-  border-radius: 0.64rem;
+  border-radius: 0.16rem;
   transition: all $duration-fast;
 
-  &.active,
-  &:focus-within {
+  &.active {
     background: #fff;
-    border-color: #4A90E2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.12);
+    border-color: $color-primary;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.12);
   }
 }
 
@@ -533,6 +389,7 @@ function toggleAgreement(e: Event) {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-right: 0.24rem;
 }
 
 .field-input {
@@ -540,68 +397,102 @@ function toggleAgreement(e: Event) {
   height: 100%;
   background: transparent;
   border: 0;
-  outline: none;
-  font-size: 0.48rem;   // 18px
-  font-weight: 500;
+  outline: 0;
+  font-size: 0.48rem;           // 18px
   color: $color-text-primary;
-  letter-spacing: 0.02em;
   min-width: 0;
+  letter-spacing: 0.02em;
 
   &::placeholder {
-    color: #B8C2D0;
-    font-size: 0.48rem;
+    color: #B0B8C2;
     font-weight: 400;
   }
 }
 
-// 友情提示
+// =============================================================
+// 警告行
+// =============================================================
 .warning {
-  margin-top: $spacing-md;
-  padding: $spacing-sm $spacing-md;
-  background: linear-gradient(135deg, #FFF7EC 0%, #FFEBD9 100%);
-  border: 1px solid #FFD9B3;
-  border-radius: $radius-md;
-  color: #C2580E;
-  font-size: $font-size-xs;
-  line-height: 1.65;
+  margin-top: 0.32rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
 }
 
-.warning-title {
+.warning-row {
   display: flex;
-  align-items: center;
-  gap: 0.12rem;
-  margin-bottom: 0.12rem;
-  font-weight: 700;
+  align-items: flex-start;
+  gap: 0.16rem;
 }
 
 .warning-icon {
+  flex-shrink: 0;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.04rem;
 }
 
-.warning-emph {
-  margin-top: 0.12rem;
-  font-weight: 600;
-  color: #A64800;
+.warning-text {
+  font-size: 0.32rem;
+  color: #1A1A1A;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
-// 协议（label 包裹，原生 checkbox appearance:none + 自定义样式，零事件冲突）
+.warning-note {
+  font-size: 0.32rem;
+  color: #1A1A1A;
+  margin: 0.08rem 0 0 0.4rem;
+  line-height: 1.6;
+}
+
+// =============================================================
+// 友情提示（橙底）
+// =============================================================
+.tip-orange {
+  margin-top: 0.32rem;
+  padding: 0.32rem 0.32rem;
+  background: linear-gradient(135deg, #FFF4E6 0%, #FFE6CC 100%);
+  border-radius: 0.16rem;
+  border: 1px solid #FFD9A6;
+
+  p {
+    margin: 0;
+    font-size: 0.34rem;
+    color: #C2580E;
+    line-height: 1.6;
+  }
+}
+
+.tip-orange-title {
+  font-weight: 700 !important;
+  margin-bottom: 0.08rem !important;
+}
+
+.tip-orange-emph {
+  font-weight: 600 !important;
+  margin-top: 0.08rem !important;
+}
+
+// =============================================================
+// 协议（label 包裹 + 原生 checkbox）
+// =============================================================
 .agreement {
   display: flex;
   align-items: flex-start;
   gap: 0.24rem;
-  margin-top: $spacing-md;
+  margin-top: 0.4rem;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-// 原生 checkbox 直接做视觉：appearance: none 后它就是一个 div，
-// 点击事件天然穿透，label 包裹点击文字/勾都能触发 toggle
 .agreement-native {
   flex-shrink: 0;
   appearance: none;
   -webkit-appearance: none;
-  width: 0.6rem;      // 22.5px 勾选框（比 21px 更大 tap target）
+  width: 0.6rem;                // 22.5px
   height: 0.6rem;
   margin: 0.06rem 0 0 0;
   border: 1.5px solid #C8C8C8;
@@ -612,17 +503,14 @@ function toggleAgreement(e: Event) {
   transition: all $duration-fast;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  // 关键：确保 input 不被 flex 挤压，始终 22.5px 见方
   display: inline-block;
   vertical-align: middle;
-  // 双击禁用（移动端反复点误触）
   touch-action: manipulation;
 
   &:checked {
     background: $color-primary;
     border-color: $color-primary;
 
-    // CSS 画勾（用 border + rotate，不依赖图片，dpr-safe）
     &::after {
       content: '';
       position: absolute;
@@ -639,11 +527,11 @@ function toggleAgreement(e: Event) {
 
 .agreement-text {
   flex: 1;
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
+  font-size: 0.32rem;
+  color: #1A1A1A;
   line-height: 1.6;
   word-break: break-word;
-  min-width: 0; // 教程 flex 子项溢出处理
+  min-width: 0;
 }
 
 .agreement-link {
@@ -653,199 +541,46 @@ function toggleAgreement(e: Event) {
   font-weight: 600;
 }
 
-// 提交按钮
+// =============================================================
+// 提交按钮（撑满整宽，大圆角）
+// =============================================================
 .submit {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.24rem;
   width: 100%;
-  margin-top: $spacing-lg;
-  height: 1.733rem;     // 65px（更大更突出）
+  height: 1.733rem;             // 65px
+  margin-top: 0.48rem;
   border: 0;
-  border-radius: 0.853rem;
+  border-radius: 0.853rem;      // 32px 大圆角
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
   color: #fff;
-  font-size: 0.56rem;   // 21px
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  box-shadow:
-    0 10px 24px rgba(108, 92, 231, 0.4),
-    0 2px 6px rgba(74, 144, 226, 0.3);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;       // 「立 即 查 询」加间距
   cursor: pointer;
-  overflow: hidden;
-  transition: all $duration-fast;
+  box-shadow: 0 12px 28px rgba(108, 92, 231, 0.32);
   -webkit-tap-highlight-color: transparent;
+  transition: all $duration-fast;
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
-    animation: submit-shine 2.4s ease-in-out infinite;
-  }
-
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(1px);
-    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+    box-shadow: 0 6px 16px rgba(108, 92, 231, 0.32);
   }
 
   &.disabled,
   &:disabled {
-    background: linear-gradient(135deg, #C8D3E0 0%, #B6C2D3 100%);
-    box-shadow: none;
+    background: linear-gradient(135deg, #C8D0DD 0%, #B0B8C2 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     cursor: not-allowed;
-    opacity: 0.85;
-    &::after { display: none; }
-    .submit-arrow { display: none; }
   }
 }
 
-.submit-shine {
-  // 占位元素，参考 .submit::after
-}
-
-@keyframes submit-shine {
-  0% { left: -100%; }
-  60%, 100% { left: 100%; }
-}
-
 .submit-text {
-  position: relative;
-  z-index: 1;
-}
-
-.submit-arrow {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  animation: arrow-pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes arrow-pulse {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
-}
-
-// 卡内信任条
-.trust {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-xs;
-  margin-top: $spacing-md;
-  padding-top: $spacing-sm;
-  border-top: 1px solid $color-border-light;
-}
-
-.trust-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.08rem;
-  font-size: 0.28rem;  // 10.5px
-  color: #6B7B95;
-}
-
-.trust-sep {
-  color: #C8D0DD;
-  font-size: 0.28rem;
-}
-
-// =============================================================
-// 核心优势 3 列
-// =============================================================
-.features {
-  display: flex;
-  gap: $spacing-sm;
-  width: 100%;
-  max-width: 10rem;
-  margin: $spacing-md $spacing-md 0;
-  padding: 0;
-}
-
-.feature {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.16rem;
-  padding: $spacing-md 0.16rem;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: $radius-md;
-  box-shadow: 0 4px 12px rgba(74, 100, 180, 0.06);
-  text-align: center;
-}
-
-.feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 0.24rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-}
-
-.icon-blue   { background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%); }
-.icon-purple { background: linear-gradient(135deg, #6C5CE7 0%, #A55EEA 100%); }
-.icon-cyan   { background: linear-gradient(135deg, #00CEC9 0%, #0984E3 100%); }
-
-.feature-title {
-  font-size: $font-size-sm;
-  font-weight: 700;
-  color: $color-text-primary;
-  margin-top: 0.04rem;
-}
-
-.feature-desc {
-  font-size: 0.28rem;   // 10.5px
-  color: $color-text-secondary;
-  line-height: 1.5;
-}
-
-// =============================================================
-// Footer
-// =============================================================
-.footer {
-  width: 100%;
-  max-width: 10rem;
-  margin-top: $spacing-md;
-  padding: 0 $spacing-md env(safe-area-inset-bottom);
-  text-align: center;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-sm;
-  margin-bottom: 0.16rem;
-}
-
-.footer-link {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
-  text-decoration: none;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.footer-sep {
-  color: #C8D0DD;
-}
-
-.footer-copy {
-  font-size: 0.28rem;
-  color: $color-text-placeholder;
-  margin: 0;
+  display: inline-block;
+  // letter-spacing 会让第一个字左偏，这里补偿
+  margin-left: -0.32em;
 }
 
 // =============================================================
@@ -855,79 +590,85 @@ function toggleAgreement(e: Event) {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: $z-index-popup;
   display: flex;
-  align-items: flex-end;
-  animation: fade-in 0.2s ease-out;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-overlay;
+  padding: $spacing-md;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .popup {
   width: 100%;
+  max-width: 8rem;
   background: #fff;
-  border-radius: $radius-lg $radius-lg 0 0;
-  max-height: 70vh;
+  border-radius: 0.32rem;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  max-height: 80vh;
 }
 
 .popup-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-md;
-  border-bottom: 1px solid $color-border;
-  h3 { font-size: $font-size-md; font-weight: 600; }
+  padding: 0.4rem $spacing-md;
+  border-bottom: 1px solid $color-border-light;
+
+  h3 {
+    margin: 0;
+    font-size: 0.48rem;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
 }
 
 .popup-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 0.6rem;
+  height: 0.6rem;
   cursor: pointer;
-  padding: $spacing-xs;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .popup-body {
   flex: 1;
-  overflow-y: auto;
   padding: $spacing-md;
-  font-size: $font-size-sm;
+  overflow-y: auto;
+  font-size: 0.36rem;
   color: $color-text-secondary;
-  line-height: 1.8;
+  line-height: 1.6;
+
+  p { margin: 0 0 $spacing-sm 0; }
 }
 
 .popup-todo {
-  margin-top: $spacing-md;
+  margin-top: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1px dashed $color-border;
   color: $color-text-placeholder;
-  font-size: $font-size-xs;
+  font-size: 0.32rem;
 }
 
 .popup-foot {
-  padding: $spacing-md;
-  border-top: 1px solid $color-border;
+  padding: $spacing-sm $spacing-md $spacing-md;
 }
 
 .popup-confirm {
   width: 100%;
   height: 1.173rem;
-  background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
-  color: #fff;
-  font-size: $font-size-sm;
-  font-weight: 600;
   border: 0;
-  border-radius: $radius-md;
+  border-radius: 0.16rem;
+  background: $color-primary;
+  color: #fff;
+  font-size: 0.4rem;
+  font-weight: 600;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 // =============================================================
@@ -940,18 +681,12 @@ function toggleAgreement(e: Event) {
   transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.78);
   color: #fff;
-  font-size: $font-size-sm;
-  padding: $spacing-sm $spacing-lg;
-  border-radius: $radius-md;
+  font-size: 0.36rem;
+  padding: 0.24rem 0.4rem;
+  border-radius: 0.16rem;
   z-index: 9999;
   pointer-events: none;
   max-width: 80%;
   text-align: center;
-  animation: toast-in 0.2s ease-out;
-}
-
-@keyframes toast-in {
-  from { opacity: 0; transform: translate(-50%, -40%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 </style>
