@@ -260,10 +260,10 @@ function toggleAgreement(e: Event) {
 // =============================================================
 .hero {
   width: 100%;
-  padding: 0.8rem $spacing-md 0.6rem;
+  padding: 0.8rem 0.853rem 0.6rem;  // 0.853rem = 32px，标题与卡片边距对齐
   display: flex;
   flex-direction: column;
-  align-items: center;          // 水平居中
+  align-items: center;
   text-align: center;
   flex-shrink: 0;
 }
@@ -324,12 +324,12 @@ function toggleAgreement(e: Event) {
 }
 
 // =============================================================
-// 表单卡：撑满整宽（不要 max-width）
+// 表单卡：两侧留更多空间（不撑满整宽）
 // =============================================================
 .card {
-  width: 100%;                  // 撑满
-  margin: 0.32rem $spacing-md 0; // 左右只留边距
-  padding: 0.48rem 0.32rem 0.4rem;
+  width: 100%;
+  margin: 0.32rem 0.853rem 0;    // 左右各 32px 边距（1rem = 37.5px，0.853 = 32px）
+  padding: 0.64rem 0.4rem 0.56rem;  // 加大上下内边距
   background: #fff;
   border-radius: 0.48rem;
   box-shadow:
@@ -344,9 +344,9 @@ function toggleAgreement(e: Event) {
   align-items: center;
   justify-content: center;
   gap: 0.16rem;
-  padding-bottom: 0.32rem;
+  padding-bottom: 0.48rem;        // 拉长 0.5 倍
   border-bottom: 1px solid $color-border-light;
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.48rem;         // 拉长 0.5 倍
 }
 
 .tip-icon {
@@ -363,19 +363,19 @@ function toggleAgreement(e: Event) {
 }
 
 // =============================================================
-// 输入框（60-65px 高）
+// 输入框（90px 高，拉长 1.5 倍）
 // =============================================================
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 0.24rem;
+  gap: 0.36rem;                  // 0.24 → 0.36，列表项上下留出更多空间
 }
 
 .field {
   display: flex;
   align-items: center;
-  height: 1.6rem;               // 60px
-  padding: 0 0.32rem;
+  height: 2.4rem;                // 60px → 90px，拉长 0.5 倍
+  padding: 0 0.4rem;
   background: #F4F7FC;
   border: 1.5px solid transparent;
   border-radius: 0.16rem;
@@ -393,7 +393,7 @@ function toggleAgreement(e: Event) {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-right: 0.24rem;
+  margin-right: 0.32rem;
 }
 
 .field-input {
@@ -402,7 +402,7 @@ function toggleAgreement(e: Event) {
   background: transparent;
   border: 0;
   outline: 0;
-  font-size: 0.48rem;           // 18px
+  font-size: 0.56rem;            // 18px → 21px
   color: $color-text-primary;
   min-width: 0;
   letter-spacing: 0.02em;
@@ -414,19 +414,20 @@ function toggleAgreement(e: Event) {
 }
 
 // =============================================================
-// 警告行
+// 警告行（拉长 0.5 倍）
 // =============================================================
 .warning {
-  margin-top: 0.32rem;
+  margin-top: 0.48rem;            // 0.32 → 0.48，上下留更多空间
   display: flex;
   flex-direction: column;
-  gap: 0.16rem;
+  gap: 0.24rem;                   // 0.16 → 0.24
 }
 
 .warning-row {
   display: flex;
   align-items: flex-start;
   gap: 0.16rem;
+  min-height: 0.6rem;             // 拉长 0.5 倍
 }
 
 .warning-icon {
@@ -438,67 +439,69 @@ function toggleAgreement(e: Event) {
 }
 
 .warning-text {
-  font-size: 0.32rem;
+  font-size: 0.36rem;             // 0.32 → 0.36，字略大
   color: #1A1A1A;
-  line-height: 1.6;
+  line-height: 1.7;
   font-weight: 500;
 }
 
 .warning-note {
-  font-size: 0.32rem;
+  font-size: 0.36rem;
   color: #1A1A1A;
-  margin: 0.08rem 0 0 0.4rem;
-  line-height: 1.6;
+  margin: 0.16rem 0 0 0.4rem;     // 上下留空间
+  line-height: 1.7;
 }
 
 // =============================================================
-// 友情提示（橙底）
+// 友情提示（橙底，拉长 0.5 倍）
 // =============================================================
 .tip-orange {
-  margin-top: 0.32rem;
-  padding: 0.32rem 0.32rem;
+  margin-top: 0.48rem;            // 上下留更多空间
+  padding: 0.48rem 0.4rem;        // 0.32 → 0.48，上下 padding 加大
   background: linear-gradient(135deg, #FFF4E6 0%, #FFE6CC 100%);
   border-radius: 0.16rem;
   border: 1px solid #FFD9A6;
 
   p {
     margin: 0;
-    font-size: 0.34rem;
+    font-size: 0.36rem;           // 0.34 → 0.36
     color: #C2580E;
-    line-height: 1.6;
+    line-height: 1.8;             // 1.6 → 1.8
   }
 }
 
 .tip-orange-title {
   font-weight: 700 !important;
-  margin-bottom: 0.08rem !important;
+  margin-bottom: 0.16rem !important;  // 0.08 → 0.16
 }
 
 .tip-orange-emph {
   font-weight: 600 !important;
-  margin-top: 0.08rem !important;
+  margin-top: 0.16rem !important;     // 0.08 → 0.16
 }
 
 // =============================================================
-// 协议（label 包裹 + 原生 checkbox）
+// 协议（label 包裹 + 原生 checkbox，拉长 0.5 倍）
 // =============================================================
 .agreement {
   display: flex;
   align-items: flex-start;
   gap: 0.24rem;
-  margin-top: 0.4rem;
+  margin-top: 0.56rem;           // 0.4 → 0.56
+  padding: 0.16rem 0;            // 加一点上下 padding
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  min-height: 0.6rem;
 }
 
 .agreement-native {
   flex-shrink: 0;
   appearance: none;
   -webkit-appearance: none;
-  width: 0.6rem;                // 22.5px
+  width: 0.6rem;
   height: 0.6rem;
-  margin: 0.06rem 0 0 0;
+  margin: 0.1rem 0 0 0;          // 略偏下与文字基线对齐
   border: 1.5px solid #C8C8C8;
   border-radius: 0.09rem;
   background: #fff;
@@ -531,9 +534,9 @@ function toggleAgreement(e: Event) {
 
 .agreement-text {
   flex: 1;
-  font-size: 0.32rem;
+  font-size: 0.36rem;            // 0.32 → 0.36
   color: #1A1A1A;
-  line-height: 1.6;
+  line-height: 1.7;
   word-break: break-word;
   min-width: 0;
 }
@@ -546,22 +549,22 @@ function toggleAgreement(e: Event) {
 }
 
 // =============================================================
-// 提交按钮（撑满整宽，大圆角）
+// 提交按钮（撑满整宽，大圆角，拉长 0.5 倍）
 // =============================================================
 .submit {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 1.733rem;             // 65px
-  margin-top: 0.48rem;
+  height: 2.6rem;               // 65px → 97.5px，拉长 0.5 倍
+  margin-top: 0.72rem;           // 0.48 → 0.72
   border: 0;
-  border-radius: 0.853rem;      // 32px 大圆角
+  border-radius: 1.28rem;       // 32px → 48px
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
   color: #fff;
-  font-size: 0.56rem;
+  font-size: 0.64rem;            // 0.56 → 0.64
   font-weight: 800;
-  letter-spacing: 0.32em;       // 「立 即 查 询」加间距
+  letter-spacing: 0.32em;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(108, 92, 231, 0.32);
   -webkit-tap-highlight-color: transparent;
@@ -583,7 +586,6 @@ function toggleAgreement(e: Event) {
 
 .submit-text {
   display: inline-block;
-  // letter-spacing 会让第一个字左偏，这里补偿
   margin-left: -0.32em;
 }
 
