@@ -1,27 +1,28 @@
 <!--
-  ResultPage.vue - 评分结果页（合理放大 + 居中下移）
-  风格：现代金融科技风 — Hero 评分 + 银行详情卡片 + 安全提示
-  流程：先 5-10 秒加载动画 → 加载完成展示评分
-
-  尺寸策略：loading icon ~180px (1.5x)，银行徽章 56px (1.75x)，银行名/分 24px (1.5x)
+  ResultPage.vue - 重设计 v3
+  ─────────────────────────────────────
+  - 加载页：全屏渐变 + 居中大圆环 + 进度条
+  - 结果页：Hero 评分 + 银行列表卡 + 优势区 + footer（填满 viewport）
+  - 与 InputPage 保持统一视觉语言
+  ─────────────────────────────────────
 -->
 <template>
-  <div class="page-result">
+  <div class="page">
 
-    <!-- ===== 加载中 ===== -->
-    <div v-if="loading" class="loading-page">
+    <!-- ============ 加载中 ============ -->
+    <div v-if="loading" class="loading">
       <DecorationBg />
       <div class="loading-card">
         <div class="loading-icon-wrap">
-          <div class="loading-ring loading-ring-1" />
-          <div class="loading-ring loading-ring-2" />
-          <div class="loading-ring loading-ring-3" />
+          <div class="ring ring-1" />
+          <div class="ring ring-2" />
+          <div class="ring ring-3" />
           <div class="loading-center">
-            <AppIcon name="database" color="#4A90E2" size="0.96rem" />
+            <AppIcon name="database" color="#4A90E2" size="1rem" />
           </div>
         </div>
         <p class="loading-title">个人综合评分</p>
-        <p class="loading-tip">{{ loadingTip }}<span class="dot-anim">.</span></p>
+        <p class="loading-tip">{{ loadingTip }}<span class="dots">.</span></p>
         <div class="loading-progress">
           <div class="progress-bar" :style="{ width: progressPercent + '%' }" />
         </div>
@@ -29,20 +30,19 @@
       </div>
     </div>
 
-    <!-- ===== 结果内容 ===== -->
+    <!-- ============ 结果内容 ============ -->
     <template v-else-if="comprehensive">
-      <!-- 蓝色 Hero -->
-      <div class="hero">
+      <header class="hero">
         <DecorationBg />
 
-        <!-- 顶部小标签 -->
         <div class="hero-top">
-          <span class="hero-top-badge"><AppIcon name="bolt" color="#FFD740" size="0.4rem" /> 实时评估</span>
+          <span class="hero-badge">
+            <AppIcon name="bolt" color="#FFD740" size="0.4rem" /> 实时评估
+          </span>
         </div>
 
         <p class="hero-label">您的综合评分</p>
 
-        <!-- 评分大数字（带圆环进度） -->
         <div class="hero-score-wrap">
           <svg class="score-ring" viewBox="0 0 200 200">
             <circle class="ring-bg" cx="100" cy="100" r="86" fill="none" stroke-width="8" />
@@ -63,66 +63,102 @@
           </div>
         </div>
 
-        <!-- 等级标签 + 评价 -->
-        <div class="hero-level-badge" :class="levelBadgeClass">
+        <div class="hero-level" :class="levelBadgeClass">
           <AppIcon :name="levelIconName" :color="levelIconColor" size="0.42rem" />
           <span>{{ comprehensive.levelName }}</span>
         </div>
         <p class="hero-comment">{{ levelComment }}</p>
+      </header>
 
-        <!-- 底部白色卡片（向上凸出） -->
-        <div class="hero-bottom-card">
-          <div class="card-header">
-            <span class="card-title"><AppIcon name="database" color="#4A90E2" size="0.5rem" /> 合作机构评分详情</span>
-            <span class="card-desc">数据来源：银行大数据</span>
+      <!-- 银行详情卡 -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <AppIcon name="database" color="#4A90E2" size="0.5rem" />
+            <span>合作机构评分详情</span>
           </div>
+          <span class="card-desc">数据来源：银行大数据</span>
+        </div>
 
-          <!-- 四行银行评分（合理放大） -->
-          <div class="bank-list">
-            <div
-              v-for="bank in banks"
-              :key="bank.scoreType"
-              class="bank-item"
-            >
-              <div class="bank-left">
-                <BankIcon :score-type="bank.scoreType" size="1.4rem" />
-                <span class="bank-name">{{ getBankMeta(bank.scoreType).displayName }}</span>
-              </div>
-              <div class="bank-right">
-                <span class="bank-score" :class="getBankScoreClass(bank.score)">
-                  {{ bank.score }}
-                </span>
-                <span class="bank-level" :class="getBankLevelClass(bank.score)">
-                  {{ getLevelText(bank.score) }}
-                </span>
-              </div>
+        <div class="bank-list">
+          <div
+            v-for="bank in banks"
+            :key="bank.scoreType"
+            class="bank-item"
+          >
+            <div class="bank-left">
+              <BankIcon :scoreType="bank.scoreType" size="1.4rem" />
+              <span class="bank-name">{{ getBankMeta(bank.scoreType).displayName }}</span>
+            </div>
+            <div class="bank-right">
+              <span class="bank-score" :class="getBankScoreClass(bank.score)">
+                {{ bank.score }}
+              </span>
+              <span class="bank-level" :class="getBankLevelClass(bank.score)">
+                {{ getLevelText(bank.score) }}
+              </span>
             </div>
           </div>
-
-          <!-- 重新查询按钮 -->
-          <div class="action-row">
-            <button class="restart-btn" @click="handleRestart">
-              <AppIcon name="refresh" color="#fff" size="0.5rem" />
-              <span>重新查询</span>
-            </button>
-          </div>
-
-          <!-- 安全提示 -->
-          <p class="security-tip">
-            <AppIcon name="info" color="#999" size="0.36rem" />
-            <span>评分结果仅供参考，实际业务以银行官方审核为准</span>
-          </p>
         </div>
-      </div>
+
+        <div class="actions">
+          <button class="restart" @click="handleRestart">
+            <AppIcon name="refresh" color="#fff" size="0.5rem" />
+            <span>重新查询</span>
+          </button>
+        </div>
+
+        <p class="security-tip">
+          <AppIcon name="info" color="#9AAAC2" size="0.36rem" />
+          <span>评分结果仅供参考，实际业务以银行官方审核为准</span>
+        </p>
+      </section>
+
+      <!-- 核心优势 3 列 -->
+      <section class="features">
+        <div class="feature">
+          <div class="feature-icon icon-blue">
+            <AppIcon name="bolt" color="#fff" size="0.6rem" />
+          </div>
+          <div class="feature-title">10秒极速</div>
+          <div class="feature-desc">智能引擎<br />秒级响应</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon icon-purple">
+            <AppIcon name="shield" color="#fff" size="0.6rem" />
+          </div>
+          <div class="feature-title">银行级安全</div>
+          <div class="feature-desc">金融级加密<br />隐私保护</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon icon-cyan">
+            <AppIcon name="database" color="#fff" size="0.6rem" />
+          </div>
+          <div class="feature-title">5+银行数据</div>
+          <div class="feature-desc">主流商业银行<br />真实可靠</div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-links">
+          <a class="footer-link" @click="showToast('客服电话：400-888-8888')">在线客服</a>
+          <span class="footer-sep">|</span>
+          <a class="footer-link" @click="showToast('关于本平台')">关于我们</a>
+          <span class="footer-sep">|</span>
+          <a class="footer-link" @click="showToast('服务协议')">服务协议</a>
+        </div>
+        <p class="footer-copy">© 2026 银行评分大数据 · 京ICP备XXXXXXXX号</p>
+      </footer>
     </template>
 
-    <!-- ===== 无结果 / 错误 ===== -->
-    <div v-else class="empty-page">
+    <!-- ============ 空状态 ============ -->
+    <div v-else class="empty">
       <DecorationBg />
       <span class="empty-icon">📋</span>
       <p class="empty-title">暂无评分数据</p>
       <p class="empty-sub">{{ errorMsg || '查询失败，请稍后重试' }}</p>
-      <button class="restart-btn" @click="handleRestart">返回</button>
+      <button class="restart" @click="handleRestart">返回</button>
     </div>
 
   </div>
@@ -143,7 +179,6 @@ const store = useRiskStore()
 
 const loading = ref(false)
 const errorMsg = ref('')
-const elapsedSeconds = ref(0)
 const progressPercent = ref(0)
 
 const loadingTips = [
@@ -280,9 +315,6 @@ onMounted(async () => {
 onUnmounted(() => stopTimers())
 
 function startTimers() {
-  elapsedSeconds.value = 0
-  elapsedTimer = setInterval(() => { elapsedSeconds.value++ }, 1000)
-
   progressPercent.value = 0
   progressTimer = setInterval(() => {
     if (progressPercent.value < 90) {
@@ -309,37 +341,46 @@ function handleRestart() {
   store.reset()
   router.push({ name: 'index' })
 }
+
+const toastMsg = ref('')
+function showToast(msg: string, duration = 2500) {
+  toastMsg.value = msg
+  setTimeout(() => { toastMsg.value = '' }, duration)
+}
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables.scss' as *;
 
-// ============================================================
+// =============================================================
 // 根容器
-// ============================================================
-.page-result {
+// =============================================================
+.page {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background: #F4F7FC;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #F4F7FC;
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .hero,
-.hero-bottom-card,
+.card,
+.features,
+.footer,
 .loading-card,
-.empty-page {
+.empty {
   width: 100%;
-  max-width: 10rem; // 375px 居中
+  max-width: 10rem;
 }
 
-// ============================================================
-// 加载页（居中卡片，合理放大）
-// ============================================================
-.loading-page {
+// =============================================================
+// 加载页
+// =============================================================
+.loading {
   position: relative;
   min-height: 100vh;
   width: 100%;
@@ -355,7 +396,7 @@ function handleRestart() {
   z-index: 1;
   background: #fff;
   border-radius: 0.48rem;
-  padding: $spacing-lg $spacing-md;
+  padding: $spacing-xl $spacing-md $spacing-lg;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -365,7 +406,7 @@ function handleRestart() {
 
 .loading-icon-wrap {
   position: relative;
-  width: 4.8rem;     // 180px（合理放大，原 120px）
+  width: 4.8rem;     // 180px
   height: 4.8rem;
   display: flex;
   align-items: center;
@@ -373,25 +414,25 @@ function handleRestart() {
   margin-bottom: $spacing-xs;
 }
 
-.loading-ring {
+.ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   border: 4px solid transparent;
 }
 
-.loading-ring-1 {
+.ring-1 {
   border-top-color: #4A90E2;
   animation: spin 1.2s linear infinite;
 }
 
-.loading-ring-2 {
+.ring-2 {
   border-right-color: #6C5CE7;
   inset: 0.32rem;
   animation: spin 1.6s linear reverse infinite;
 }
 
-.loading-ring-3 {
+.ring-3 {
   border-bottom-color: #A55EEA;
   inset: 0.64rem;
   animation: spin 2s linear infinite;
@@ -416,7 +457,7 @@ function handleRestart() {
 }
 
 .loading-title {
-  font-size: 1.067rem; // 40px（合理放大，原 32px）
+  font-size: 1.067rem;
   font-weight: 800;
   color: $color-text-primary;
   margin: 0;
@@ -430,7 +471,7 @@ function handleRestart() {
   text-align: center;
 }
 
-.dot-anim {
+.dots {
   display: inline-block;
   animation: dot-bounce 1.4s ease-in-out infinite;
   letter-spacing: 0.1em;
@@ -468,15 +509,15 @@ function handleRestart() {
   letter-spacing: 0.02em;
 }
 
-// ============================================================
-// Hero 区（带背景装饰，整体居中下移）
-// ============================================================
+// =============================================================
+// Hero 区
+// =============================================================
 .hero {
   position: relative;
+  padding: 1.4rem $spacing-md $spacing-lg;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.6rem $spacing-md $spacing-xl;   // 顶部下移 60px
   background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 35%, #A8B6F0 60%, #F4F7FC 100%);
   overflow: hidden;
 }
@@ -489,7 +530,7 @@ function handleRestart() {
   z-index: 2;
 }
 
-.hero-top-badge {
+.hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.08rem;
@@ -512,15 +553,14 @@ function handleRestart() {
   z-index: 2;
 }
 
-// 评分大数字（带圆环）
 .hero-score-wrap {
   position: relative;
-  width: 4.8rem;   // 180px（合理放大）
+  width: 4.8rem;
   height: 4.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: $spacing-xs;
+  margin-top: $spacing-sm;
   z-index: 2;
 }
 
@@ -531,9 +571,7 @@ function handleRestart() {
   height: 100%;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
 
-  .ring-bg {
-    stroke: rgba(255, 255, 255, 0.25);
-  }
+  .ring-bg { stroke: rgba(255, 255, 255, 0.25); }
 
   .ring-fg {
     stroke-linecap: round;
@@ -555,7 +593,7 @@ function handleRestart() {
 }
 
 .score-num {
-  font-size: 2.4rem; // 90px
+  font-size: 2.4rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
@@ -567,12 +605,12 @@ function handleRestart() {
 
 .score-divider,
 .score-total {
-  font-size: 0.853rem; // 32px
+  font-size: 0.853rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
 }
 
-.hero-level-badge {
+.hero-level {
   display: inline-flex;
   align-items: center;
   gap: 0.16rem;
@@ -587,6 +625,10 @@ function handleRestart() {
   z-index: 2;
 }
 
+.badge-low  { background: rgba(0, 229, 255, 0.2);  border: 1px solid rgba(0, 229, 255, 0.5);  color: #B0F5FF; }
+.badge-mid  { background: rgba(255, 215, 64, 0.2);  border: 1px solid rgba(255, 215, 64, 0.5);  color: #FFE082; }
+.badge-high { background: rgba(255, 110, 110, 0.2); border: 1px solid rgba(255, 110, 110, 0.5); color: #FFB0B0; }
+
 .hero-comment {
   font-size: $font-size-sm;
   color: rgba(255, 255, 255, 0.85);
@@ -597,25 +639,22 @@ function handleRestart() {
   padding: 0 $spacing-md;
 }
 
-// 等级标签颜色
-.badge-low  { background: rgba(0, 229, 255, 0.2);  border: 1px solid rgba(0, 229, 255, 0.5);  color: #B0F5FF; }
-.badge-mid  { background: rgba(255, 215, 64, 0.2);  border: 1px solid rgba(255, 215, 64, 0.5);  color: #FFE082; }
-.badge-high { background: rgba(255, 110, 110, 0.2); border: 1px solid rgba(255, 110, 110, 0.5); color: #FFB0B0; }
-
-// ============================================================
-// 白色底部卡片（向上凸出）
-// ============================================================
-.hero-bottom-card {
+// =============================================================
+// 银行详情卡
+// =============================================================
+.card {
   position: relative;
   z-index: 3;
-  margin-top: $spacing-lg;
+  margin: -$spacing-md $spacing-md 0;
+  padding: $spacing-md;
   background: #fff;
-  border-radius: 0.48rem 0.48rem 0 0;
-  padding: $spacing-md $spacing-md $spacing-lg;
-  box-shadow: 0 -8px 24px rgba(74, 100, 180, 0.12);
+  border-radius: 0.48rem;
+  box-shadow:
+    0 12px 32px rgba(74, 100, 180, 0.18),
+    0 4px 8px rgba(74, 100, 180, 0.08);
 }
 
-.card-header {
+.card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -638,9 +677,6 @@ function handleRestart() {
   color: $color-text-placeholder;
 }
 
-// ============================================================
-// 四行银行评分（合理放大）
-// ============================================================
 .bank-list {
   display: flex;
   flex-direction: column;
@@ -665,7 +701,7 @@ function handleRestart() {
 }
 
 .bank-name {
-  font-size: 0.64rem; // 24px（合理放大，原 16px 的 1.5x）
+  font-size: 0.64rem;
   font-weight: 600;
   color: $color-text-primary;
   white-space: nowrap;
@@ -679,7 +715,7 @@ function handleRestart() {
 }
 
 .bank-score {
-  font-size: 0.96rem; // 36px（合理放大，原 24px 的 1.5x）
+  font-size: 0.96rem;
   font-weight: 800;
   line-height: 1;
 
@@ -699,27 +735,24 @@ function handleRestart() {
   &.bank-level-low  { background: rgba(255, 61, 0, 0.1);  color: $color-risk-high; }
 }
 
-// ============================================================
-// 重新查询按钮（合理放大）
-// ============================================================
-.action-row {
+.actions {
   margin-top: $spacing-lg;
 }
 
-.restart-btn {
+.restart {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.16rem;
   width: 100%;
-  height: 1.6rem;        // 60px
+  height: 1.733rem;
   border: 0;
-  border-radius: 0.8rem;
+  border-radius: 0.853rem;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
   color: #fff;
-  font-size: 0.533rem;   // 20px
+  font-size: 0.56rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.16em;
   box-shadow: 0 8px 20px rgba(108, 92, 231, 0.32);
   cursor: pointer;
   transition: all $duration-fast;
@@ -731,24 +764,111 @@ function handleRestart() {
   }
 }
 
-// ============================================================
-// 安全提示
-// ============================================================
 .security-tip {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.12rem;
   margin-top: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border-light;
   font-size: $font-size-xs;
   color: $color-text-placeholder;
   line-height: 1.5;
 }
 
-// ============================================================
+// =============================================================
+// 核心优势 3 列
+// =============================================================
+.features {
+  display: flex;
+  gap: $spacing-sm;
+  margin: $spacing-md $spacing-md 0;
+  padding: 0;
+}
+
+.feature {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.16rem;
+  padding: $spacing-md 0.16rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: $radius-md;
+  box-shadow: 0 4px 12px rgba(74, 100, 180, 0.06);
+  text-align: center;
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.24rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.icon-blue   { background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%); }
+.icon-purple { background: linear-gradient(135deg, #6C5CE7 0%, #A55EEA 100%); }
+.icon-cyan   { background: linear-gradient(135deg, #00CEC9 0%, #0984E3 100%); }
+
+.feature-title {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-top: 0.04rem;
+}
+
+.feature-desc {
+  font-size: 0.28rem;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+// =============================================================
+// Footer
+// =============================================================
+.footer {
+  margin-top: $spacing-md;
+  padding: 0 $spacing-md env(safe-area-inset-bottom);
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: 0.16rem;
+}
+
+.footer-link {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.footer-sep {
+  color: #C8D0DD;
+}
+
+.footer-copy {
+  font-size: 0.28rem;
+  color: $color-text-placeholder;
+  margin: 0;
+}
+
+// =============================================================
 // 空状态
-// ============================================================
-.empty-page {
+// =============================================================
+.empty {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -781,10 +901,27 @@ function handleRestart() {
   z-index: 1;
 }
 
-.empty-page .restart-btn {
+.empty .restart {
   width: auto;
   padding: 0 $spacing-xl;
   margin-top: $spacing-md;
   z-index: 1;
+}
+
+// Toast（结果页用）
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: $font-size-sm;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-md;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: 80%;
+  text-align: center;
 }
 </style>

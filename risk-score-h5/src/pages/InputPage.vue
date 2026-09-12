@@ -1,62 +1,66 @@
 <!--
-  InputPage.vue - 信息输入页（合理放大 + 居中下移）
-  风格：现代金融科技风 — 顶部蓝紫渐变 + 浮动装饰圆斑 + 白色卡片表单
-  数据流：校验通过 → 纯前端跳转 ResultPage（零后端回传）
-
-  尺寸策略：标题 ~55px (1.4x)，输入框 ~60px (1.36x)，按钮 ~60px
-  适配基准：375px 设计稿，rem = 37.5px，确保 320-414px 屏完整显示
+  InputPage.vue - 重设计 v3
+  ─────────────────────────────────────
+  设计目标（UI 设计师视角）：
+  1. 填满整个 viewport，无空白蓝渐变
+  2. 蓝色渐变 hero + 浮起白卡 + 底部功能区 + footer
+  3. 大字标题 + 居中布局 + 强视觉层级
+  4. 移动端 60px 输入/按钮（黄金 tap target）
+  5. 勾选框用原生 label 包裹，零 bug
+  6. 真实可信的产品感（功能卡片+备案+版权）
+  ─────────────────────────────────────
 -->
 <template>
-  <div class="page-input">
-    <!-- 背景装饰 -->
-    <DecorationBg />
+  <div class="page">
 
-    <!-- 顶部 Hero 区 -->
-    <div class="hero">
-      <!-- 顶部认证徽章（玻璃拟态） -->
+    <!-- ============ Hero ============ -->
+    <header class="hero">
+      <DecorationBg />
+
+      <!-- 安全徽章 -->
       <div class="hero-badge">
-        <span class="badge-icon"><AppIcon name="shield" color="#fff" /></span>
+        <span class="badge-dot"><AppIcon name="shield" color="#fff" size="0.42rem" /></span>
         <span class="badge-text">银行级安全加密 · 权威认证</span>
       </div>
 
-      <!-- 主标题 -->
+      <!-- 主标题区 -->
       <div class="hero-titles">
-        <h1 class="hero-title">银行评分大数据</h1>
-        <h1 class="hero-title hero-title-accent">专业查询</h1>
-        <div class="hero-underline"><span /></div>
-        <p class="hero-subtitle">全面 · 精准 · 银行级安全</p>
+        <h1 class="title-main">银行评分大数据</h1>
+        <h1 class="title-accent">专业查询</h1>
+        <div class="title-underline"><i /></div>
+        <p class="title-sub">全面 · 精准 · 银行级安全</p>
       </div>
 
       <!-- 数据条 -->
-      <div class="hero-stats">
-        <div class="stat-item">
+      <div class="stats">
+        <div class="stat">
           <div class="stat-num">5<span>+</span></div>
           <div class="stat-label">合作银行</div>
         </div>
-        <div class="stat-divider" />
-        <div class="stat-item">
+        <div class="stat-sep" />
+        <div class="stat">
           <div class="stat-num">10<span>s</span></div>
           <div class="stat-label">极速出分</div>
         </div>
-        <div class="stat-divider" />
-        <div class="stat-item">
+        <div class="stat-sep" />
+        <div class="stat">
           <div class="stat-num">99.9<span>%</span></div>
           <div class="stat-label">数据准确</div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- 白色表单卡片 -->
-    <div class="form-card">
-      <!-- 顶部提示条 -->
+    <!-- ============ 表单卡 ============ -->
+    <section class="card">
+      <!-- 提示条 -->
       <div class="tip-bar">
-        <AppIcon name="bell" color="#4A90E2" size="0.5rem" />
+        <span class="tip-icon"><AppIcon name="bell" color="#4A90E2" size="0.48rem" /></span>
         <span class="tip-text">为保证数据准确，请输入真实信息</span>
       </div>
 
-      <!-- 3 个圆角胶囊输入框 -->
+      <!-- 输入项 -->
       <div class="fields">
-        <div class="field-pill" :class="{ focus: focusField === 'name' }">
+        <div class="field" :class="{ active: focusField === 'name' }">
           <span class="field-icon"><AppIcon name="user" color="#4A90E2" size="0.56rem" /></span>
           <input
             v-model="form.name"
@@ -64,10 +68,10 @@
             placeholder="请输入本人姓名"
             maxlength="30"
             @focus="focusField = 'name'"
-            @blur="(focusField = '', validateField('name'))"
+            @blur="focusField = ''"
           />
         </div>
-        <div class="field-pill" :class="{ focus: focusField === 'idCard' }">
+        <div class="field" :class="{ active: focusField === 'idCard' }">
           <span class="field-icon"><AppIcon name="idcard" color="#4A90E2" size="0.56rem" /></span>
           <input
             v-model="form.idCard"
@@ -76,10 +80,10 @@
             maxlength="18"
             inputmode="text"
             @focus="focusField = 'idCard'"
-            @blur="(focusField = '', validateField('idCard'))"
+            @blur="focusField = ''"
           />
         </div>
-        <div class="field-pill" :class="{ focus: focusField === 'phone' }">
+        <div class="field" :class="{ active: focusField === 'phone' }">
           <span class="field-icon"><AppIcon name="phone" color="#4A90E2" size="0.56rem" /></span>
           <input
             v-model="form.phone"
@@ -88,83 +92,129 @@
             maxlength="11"
             inputmode="numeric"
             @focus="focusField = 'phone'"
-            @blur="(focusField = '', validateField('phone'))"
+            @blur="focusField = ''"
           />
         </div>
       </div>
 
-      <!-- 友情提示（柔和橙底） -->
-      <div class="friend-tip">
-        <div class="friend-tip-header">
-          <span class="friend-tip-icon"><AppIcon name="info" color="#C2580E" size="0.5rem" /></span>
-          <span class="friend-tip-title">友情提示</span>
+      <!-- 友情提示 -->
+      <div class="warning">
+        <div class="warning-title">
+          <span class="warning-icon"><AppIcon name="info" color="#C2580E" size="0.5rem" /></span>
+          <span>友情提示</span>
         </div>
-        <p>我司不是提供央行征信和个人爬虫等隐私数据查询，也不提供贷款及信用修复复业务。</p>
-        <p class="friend-tip-warn">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
+        <p>我司不是提供央行征信和个人爬虫等隐私数据查询，也不提供贷款及信用修复业务。</p>
+        <p class="warning-emph">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
       </div>
 
-      <!-- 协议勾选（修复：改回原生 span + 点击事件直接挂 box） -->
-      <div class="agreement" @click.self="toggleAgreement">
-        <span
-          class="agreement-box"
-          :class="{ checked: agreed }"
-          role="checkbox"
-          :aria-checked="agreed"
-          tabindex="0"
-          @click.stop="toggleAgreement"
-          @keydown.enter.prevent="toggleAgreement"
-          @keydown.space.prevent="toggleAgreement"
-        >
+      <!-- 协议（label+原生 checkbox 双向绑定，零事件冲突） -->
+      <label class="agreement">
+        <input
+          v-model="agreed"
+          type="checkbox"
+          class="agreement-native"
+        />
+        <span class="agreement-box" :class="{ checked: agreed }">
           <span v-if="agreed" class="agreement-tick">✓</span>
         </span>
         <span class="agreement-text">
           我已阅读并同意
-          <a class="agreement-link" @click.stop="openAgreement('user')">《用户协议》</a>
-          <a class="agreement-link" @click.stop="openAgreement('privacy')">《隐私政策》</a>
-          <a class="agreement-link" @click.stop="openAgreement('auth')">《授权书》</a>
+          <a class="agreement-link" @click.prevent.stop="openAgreement('user')">《用户协议》</a>
+          <a class="agreement-link" @click.prevent.stop="openAgreement('privacy')">《隐私政策》</a>
+          <a class="agreement-link" @click.prevent.stop="openAgreement('auth')">《授权书》</a>
           ，点击勾选即代表您同意上述法律文书相关条款。
         </span>
-      </div>
+      </label>
 
-      <!-- 立即查询按钮 -->
+      <!-- 提交按钮 -->
       <button
-        class="pay-btn"
+        class="submit"
         :class="{ disabled: !canSubmit }"
         :disabled="!canSubmit"
         @click="handleSubmit"
       >
-        <span class="pay-btn-shine" />
-        <span class="pay-btn-text">立即查询</span>
-        <span class="pay-btn-arrow"><AppIcon name="arrowRight" color="#fff" size="0.5rem" /></span>
+        <span class="submit-shine" />
+        <span class="submit-text">立 即 查 询</span>
+        <span class="submit-arrow"><AppIcon name="arrowRight" color="#fff" size="0.5rem" /></span>
       </button>
 
-      <!-- 底部信任标识 -->
-      <div class="trust-row">
-        <span class="trust-item"><AppIcon name="lock" color="#999" size="0.36rem" /> 信息加密</span>
-        <span class="trust-item"><AppIcon name="shield" color="#999" size="0.36rem" /> 隐私保护</span>
-        <span class="trust-item"><AppIcon name="database" color="#999" size="0.36rem" /> 银行数据</span>
+      <!-- 卡内信任条 -->
+      <div class="trust">
+        <span class="trust-item">
+          <AppIcon name="lock" color="#9AAAC2" size="0.36rem" />
+          <span>信息加密</span>
+        </span>
+        <span class="trust-sep">·</span>
+        <span class="trust-item">
+          <AppIcon name="shield" color="#9AAAC2" size="0.36rem" />
+          <span>隐私保护</span>
+        </span>
+        <span class="trust-sep">·</span>
+        <span class="trust-item">
+          <AppIcon name="database" color="#9AAAC2" size="0.36rem" />
+          <span>银行数据</span>
+        </span>
       </div>
-    </div>
+    </section>
 
-    <!-- 协议弹窗 -->
-    <div v-if="popupType" class="agreement-overlay" @click.self="popupType = ''">
-      <div class="agreement-popup">
-        <div class="popup-header">
+    <!-- ============ 核心优势 3 列 ============ -->
+    <section class="features">
+      <div class="feature">
+        <div class="feature-icon icon-blue">
+          <AppIcon name="bolt" color="#fff" size="0.6rem" />
+        </div>
+        <div class="feature-title">10秒极速</div>
+        <div class="feature-desc">智能引擎秒级响应<br />无需漫长等待</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon icon-purple">
+          <AppIcon name="shield" color="#fff" size="0.6rem" />
+        </div>
+        <div class="feature-title">银行级安全</div>
+        <div class="feature-desc">金融级数据加密<br />全程隐私保护</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon icon-cyan">
+          <AppIcon name="database" color="#fff" size="0.6rem" />
+        </div>
+        <div class="feature-title">5+银行数据</div>
+        <div class="feature-desc">覆盖主流商业银行<br />数据真实可靠</div>
+      </div>
+    </section>
+
+    <!-- ============ Footer ============ -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a class="footer-link" @click="showToast('客服电话：400-888-8888')">在线客服</a>
+        <span class="footer-sep">|</span>
+        <a class="footer-link" @click="openAgreement('user')">用户协议</a>
+        <span class="footer-sep">|</span>
+        <a class="footer-link" @click="openAgreement('privacy')">隐私政策</a>
+      </div>
+      <p class="footer-copy">© 2026 银行评分大数据 · 京ICP备XXXXXXXX号</p>
+    </footer>
+
+    <!-- ============ 协议弹窗 ============ -->
+    <div v-if="popupType" class="popup-mask" @click.self="popupType = ''">
+      <div class="popup">
+        <div class="popup-head">
           <h3>{{ popupTitle }}</h3>
-          <span class="close-btn" @click="popupType = ''"><AppIcon name="close" color="#666" size="0.5rem" /></span>
+          <span class="popup-close" @click="popupType = ''">
+            <AppIcon name="close" color="#666" size="0.5rem" />
+          </span>
         </div>
         <div class="popup-body">
           <p>{{ popupContent }}</p>
           <p class="popup-todo">（本页面仅为前端展示，协议详情待接入正式文本）</p>
         </div>
-        <div class="popup-footer">
+        <div class="popup-foot">
           <button class="popup-confirm" @click="popupType = ''">我已知晓</button>
         </div>
       </div>
     </div>
 
-    <!-- Toast -->
-    <div v-if="toastMsg" class="toast-tip">{{ toastMsg }}</div>
+    <!-- ============ Toast ============ -->
+    <div v-if="toastMsg" class="toast">{{ toastMsg }}</div>
   </div>
 </template>
 
@@ -176,9 +226,6 @@ import {
   validateName,
   validateIdCard,
   validatePhone,
-  getNameError,
-  getIdCardError,
-  getPhoneError,
 } from '@/utils/validators'
 import AppIcon from '@/components/icons/AppIcons.vue'
 import DecorationBg from '@/components/DecorationBg.vue'
@@ -188,34 +235,7 @@ const store = useRiskStore()
 
 const form = reactive({ name: '', idCard: '', phone: '' })
 const focusField = ref<'' | 'name' | 'idCard' | 'phone'>('')
-
-const nameError = ref('')
-const idCardError = ref('')
-const phoneError = ref('')
-
-function validateField(field: 'name' | 'idCard' | 'phone') {
-  if (field === 'name') nameError.value = getNameError(form.name)
-  else if (field === 'idCard') idCardError.value = getIdCardError(form.idCard)
-  else phoneError.value = getPhoneError(form.phone)
-}
-
 const agreed = ref(false)
-function toggleAgreement() {
-  agreed.value = !agreed.value
-  console.log('[agreement] toggled:', agreed.value) // 调试日志
-}
-
-const popupType = ref<'' | 'user' | 'privacy' | 'auth'>('')
-const popupTitleMap: Record<string, string> = { user: '用户协议', privacy: '隐私政策', auth: '授权书' }
-const popupTitle = computed(() => (popupType.value ? popupTitleMap[popupType.value] : ''))
-const popupContentMap: Record<string, string> = {
-  user: '本协议是您与本平台之间关于使用本服务所订立的协议。请仔细阅读。',
-  privacy: '我们重视您的隐私，会严格保护您提交的个人信息安全。',
-  auth: '您授权本平台查询与您相关的风险评估数据用于评分。',
-}
-const popupContent = computed(() => (popupType.value ? popupContentMap[popupType.value] : ''))
-
-function openAgreement(type: 'user' | 'privacy' | 'auth') { popupType.value = type }
 
 const canSubmit = computed(() => {
   return (
@@ -226,8 +246,18 @@ const canSubmit = computed(() => {
   )
 })
 
+const popupType = ref<'' | 'user' | 'privacy' | 'auth'>('')
+const popupTitleMap: Record<string, string> = { user: '用户协议', privacy: '隐私政策', auth: '授权书' }
+const popupContentMap: Record<string, string> = {
+  user: '本协议是您与本平台之间关于使用本服务所订立的协议。请仔细阅读。',
+  privacy: '我们重视您的隐私，会严格保护您提交的个人信息安全。',
+  auth: '您授权本平台查询与您相关的风险评估数据用于评分。',
+}
+const popupTitle = computed(() => (popupType.value ? popupTitleMap[popupType.value] : ''))
+const popupContent = computed(() => (popupType.value ? popupContentMap[popupType.value] : ''))
+function openAgreement(type: 'user' | 'privacy' | 'auth') { popupType.value = type }
+
 function handleSubmit() {
-  validateField('name'); validateField('idCard'); validateField('phone')
   if (!validateName(form.name)) return showToast('请检查姓名输入')
   if (!validateIdCard(form.idCard)) return showToast('请检查身份证号')
   if (!validatePhone(form.phone)) return showToast('请检查手机号')
@@ -247,61 +277,57 @@ function showToast(msg: string, duration = 2500) {
 <style lang="scss" scoped>
 @use '@/assets/styles/variables.scss' as *;
 
-// ============================================================
-// 根容器：浅蓝渐变背景（与 global 一致）
-// ============================================================
-.page-input {
+// =============================================================
+// 根容器：填满 viewport + 蓝色渐变背景
+// =============================================================
+.page {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 28%, #A8B6F0 52%, #E8EEFB 75%, #FFFFFF 100%);
-  padding-bottom: $spacing-xl;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 1.6rem;   // 顶部下移（≈60px）
+  background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 18%, #A8B6F0 38%, #E8EEFB 58%, #F4F7FC 80%, #F8FAFD 100%);
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-.hero,
-.form-card {
-  width: 100%;
-  max-width: 10rem; // 375px 居中
-}
-
-// ============================================================
-// Hero 区
-// ============================================================
+// =============================================================
+// Hero 区（约 30% viewport）
+// =============================================================
 .hero {
   position: relative;
-  z-index: 1;
+  width: 100%;
+  max-width: 10rem;
+  padding: 1.4rem $spacing-md 1.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-md $spacing-md;
   color: #fff;
+  z-index: 1;
 }
 
+// 徽章
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.16rem;
-  padding: 0.16rem 0.42rem 0.16rem 0.2rem;
+  padding: 0.16rem 0.48rem 0.16rem 0.2rem;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: $radius-full;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.badge-icon {
+.badge-dot {
   display: inline-flex;
-  width: 0.5rem;
-  height: 0.5rem;
   align-items: center;
   justify-content: center;
+  width: 0.5rem;
+  height: 0.5rem;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(74, 144, 226, 0.4);
@@ -310,13 +336,11 @@ function showToast(msg: string, duration = 2500) {
 .badge-text {
   font-size: $font-size-xs;
   font-weight: 600;
-  color: #fff;
   letter-spacing: 0.04em;
-  white-space: nowrap;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-// 主标题（合理放大：1.467rem ≈ 55px，原 40px 的 1.4x）
+// 主标题
 .hero-titles {
   display: flex;
   flex-direction: column;
@@ -325,35 +349,41 @@ function showToast(msg: string, duration = 2500) {
   margin-top: 0.16rem;
 }
 
-.hero-title {
-  font-size: 1.467rem;   // ~55px
+.title-main {
+  font-size: 1.067rem;   // 40px
   font-weight: 900;
   line-height: 1.15;
-  letter-spacing: 0.04em;
   margin: 0;
+  letter-spacing: 0.04em;
   background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 4px 12px rgba(74, 144, 226, 0.4));
-  word-break: keep-all;
 }
 
-.hero-title-accent {
-  font-size: 1.6rem;     // ~60px
+.title-accent {
+  font-size: 1.2rem;     // 45px
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0;
   letter-spacing: 0.08em;
+  background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px rgba(74, 144, 226, 0.4));
 }
 
-.hero-underline {
-  margin-top: 0.2rem;
+.title-underline {
+  position: relative;
   width: 1.6rem;
   height: 0.08rem;
+  margin: 0.16rem 0;
   background: linear-gradient(90deg, transparent 0%, #fff 50%, transparent 100%);
   border-radius: 2px;
-  position: relative;
 
-  &::before {
-    content: '';
+  i {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -366,16 +396,16 @@ function showToast(msg: string, duration = 2500) {
   }
 }
 
-.hero-subtitle {
+.title-sub {
   font-size: $font-size-xs;
   color: rgba(255, 255, 255, 0.85);
-  margin-top: 0.2rem;
+  margin: 0;
   letter-spacing: 0.16em;
   font-weight: 500;
 }
 
-// Hero 底部数据条
-.hero-stats {
+// 数据条
+.stats {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -390,7 +420,7 @@ function showToast(msg: string, duration = 2500) {
   border-radius: 0.32rem;
 }
 
-.stat-item {
+.stat {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -418,24 +448,29 @@ function showToast(msg: string, duration = 2500) {
   letter-spacing: 0.04em;
 }
 
-.stat-divider {
+.stat-sep {
   width: 1px;
-  height: 0.64rem;
+  height: 0.56rem;
   background: rgba(255, 255, 255, 0.3);
   margin: 0 $spacing-xs;
 }
 
-// ============================================================
-// 白色表单卡片
-// ============================================================
-.form-card {
+// =============================================================
+// 表单卡（白底，向上浮）
+// =============================================================
+.card {
   position: relative;
   z-index: 2;
+  width: 100%;
+  max-width: 10rem;
   margin: -0.4rem $spacing-md 0;
+  padding: $spacing-md;
   background: #fff;
-  border-radius: 0.4rem;
-  padding: $spacing-md $spacing-md $spacing-lg;
-  box-shadow: 0 12px 32px rgba(74, 100, 180, 0.18), 0 4px 8px rgba(74, 100, 180, 0.08);
+  border-radius: 0.48rem;
+  box-shadow:
+    0 12px 32px rgba(74, 100, 180, 0.18),
+    0 4px 8px rgba(74, 100, 180, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
 }
 
 // 提示条
@@ -444,35 +479,39 @@ function showToast(msg: string, duration = 2500) {
   align-items: center;
   justify-content: center;
   gap: 0.16rem;
-  padding: $spacing-xs 0 $spacing-sm;
+  padding: $spacing-xs 0 $spacing-md;
+}
+
+.tip-icon {
+  display: inline-flex;
 }
 
 .tip-text {
   font-size: $font-size-sm;
   color: #4A90E2;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-// 输入框（合理放大：高度 1.6rem ≈ 60px，原 44px 的 1.36x）
+// 输入项（60px 大 tap target）
 .fields {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
 }
 
-.field-pill {
+.field {
   display: flex;
   align-items: center;
   gap: 0.24rem;
-  height: 1.6rem;   // 60px
+  height: 1.6rem;       // 60px
+  padding: 0 $spacing-md;
   background: #F4F7FC;
   border: 1.5px solid transparent;
   border-radius: 0.64rem;
-  padding: 0 $spacing-md;
   transition: all $duration-fast;
 
-  &:focus-within,
-  &.focus {
+  &.active,
+  &:focus-within {
     background: #fff;
     border-color: #4A90E2;
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.12);
@@ -493,10 +532,10 @@ function showToast(msg: string, duration = 2500) {
   border: 0;
   outline: none;
   font-size: 0.48rem;   // 18px
-  color: $color-text-primary;
   font-weight: 500;
+  color: $color-text-primary;
   letter-spacing: 0.02em;
-  min-width: 0;          // 防止 input 撑爆 flex
+  min-width: 0;
 
   &::placeholder {
     color: #B8C2D0;
@@ -505,10 +544,8 @@ function showToast(msg: string, duration = 2500) {
   }
 }
 
-// ============================================================
 // 友情提示
-// ============================================================
-.friend-tip {
+.warning {
   margin-top: $spacing-md;
   padding: $spacing-sm $spacing-md;
   background: linear-gradient(135deg, #FFF7EC 0%, #FFEBD9 100%);
@@ -519,33 +556,25 @@ function showToast(msg: string, duration = 2500) {
   line-height: 1.65;
 }
 
-.friend-tip-header {
+.warning-title {
   display: flex;
   align-items: center;
   gap: 0.12rem;
   margin-bottom: 0.12rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.friend-tip-icon {
+.warning-icon {
   display: inline-flex;
 }
 
-.friend-tip-title {
-  font-size: $font-size-xs;
-  font-weight: 700;
-  color: #C2580E;
-}
-
-.friend-tip-warn {
+.warning-emph {
   margin-top: 0.12rem;
   font-weight: 600;
   color: #A64800;
 }
 
-// ============================================================
-// 协议勾选（修复：box 改 span 自定义复选框 + 键盘可访问）
-// ============================================================
+// 协议（label 包裹整个，零事件冲突）
 .agreement {
   display: flex;
   align-items: flex-start;
@@ -553,6 +582,16 @@ function showToast(msg: string, duration = 2500) {
   margin-top: $spacing-md;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.agreement-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  // 视觉上隐藏，但屏幕阅读器可达
 }
 
 .agreement-box {
@@ -560,14 +599,13 @@ function showToast(msg: string, duration = 2500) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 0.56rem;     // 21px（明确可点击尺寸）
+  width: 0.56rem;     // 21px
   height: 0.56rem;
-  margin-top: 0.04rem;
+  margin-top: 0.06rem;
   border: 1.5px solid #C8C8C8;
   border-radius: 0.08rem;
   background: #fff;
   transition: all $duration-fast;
-  user-select: none;
 
   &.checked {
     background: $color-primary;
@@ -577,7 +615,7 @@ function showToast(msg: string, duration = 2500) {
 
 .agreement-tick {
   color: #fff;
-  font-size: 0.36rem;  // 13.5px 勾（相对 21px 框显得大）
+  font-size: 0.4rem;   // 15px（明显的大勾）
   font-weight: 900;
   line-height: 1;
 }
@@ -594,13 +632,11 @@ function showToast(msg: string, duration = 2500) {
   color: $color-primary;
   text-decoration: none;
   margin: 0 0.04rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-// ============================================================
-// 立即查询按钮（合理放大：高度 1.6rem ≈ 60px）
-// ============================================================
-.pay-btn {
+// 提交按钮
+.submit {
   position: relative;
   display: flex;
   align-items: center;
@@ -608,57 +644,64 @@ function showToast(msg: string, duration = 2500) {
   gap: 0.24rem;
   width: 100%;
   margin-top: $spacing-lg;
-  height: 1.6rem;       // 60px
+  height: 1.733rem;     // 65px（更大更突出）
   border: 0;
-  border-radius: 0.8rem;
+  border-radius: 0.853rem;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
   color: #fff;
-  font-size: 0.533rem;  // 20px
+  font-size: 0.56rem;   // 21px
   font-weight: 700;
-  letter-spacing: 0.08em;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4), 0 2px 6px rgba(74, 144, 226, 0.3);
+  letter-spacing: 0.16em;
+  box-shadow:
+    0 10px 24px rgba(108, 92, 231, 0.4),
+    0 2px 6px rgba(74, 144, 226, 0.3);
   cursor: pointer;
   overflow: hidden;
   transition: all $duration-fast;
   -webkit-tap-highlight-color: transparent;
 
-  .pay-btn-shine {
+  &::after {
+    content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-    animation: shine 2.4s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+    animation: submit-shine 2.4s ease-in-out infinite;
   }
 
   &:active {
     transform: translateY(1px);
-    box-shadow: 0 4px 10px rgba(108, 92, 231, 0.4);
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
   }
 
   &.disabled,
   &:disabled {
-    background: #C8D3E0;
+    background: linear-gradient(135deg, #C8D3E0 0%, #B6C2D3 100%);
     box-shadow: none;
     cursor: not-allowed;
     opacity: 0.85;
-    .pay-btn-shine { display: none; }
-    .pay-btn-arrow { display: none; }
+    &::after { display: none; }
+    .submit-arrow { display: none; }
   }
 }
 
-@keyframes shine {
+.submit-shine {
+  // 占位元素，参考 .submit::after
+}
+
+@keyframes submit-shine {
   0% { left: -100%; }
   60%, 100% { left: 100%; }
 }
 
-.pay-btn-text {
+.submit-text {
   position: relative;
   z-index: 1;
 }
 
-.pay-btn-arrow {
+.submit-arrow {
   position: relative;
   z-index: 1;
   display: inline-flex;
@@ -671,28 +714,126 @@ function showToast(msg: string, duration = 2500) {
   50% { transform: translateX(3px); }
 }
 
-// ============================================================
-// 底部信任标识
-// ============================================================
-.trust-row {
+// 卡内信任条
+.trust {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: $spacing-md;
+  gap: $spacing-xs;
   margin-top: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border-light;
 }
 
 .trust-item {
   display: inline-flex;
   align-items: center;
   gap: 0.08rem;
-  font-size: 0.28rem;
-  color: #999;
+  font-size: 0.28rem;  // 10.5px
+  color: #6B7B95;
 }
 
-// ============================================================
+.trust-sep {
+  color: #C8D0DD;
+  font-size: 0.28rem;
+}
+
+// =============================================================
+// 核心优势 3 列
+// =============================================================
+.features {
+  display: flex;
+  gap: $spacing-sm;
+  width: 100%;
+  max-width: 10rem;
+  margin: $spacing-md $spacing-md 0;
+  padding: 0;
+}
+
+.feature {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.16rem;
+  padding: $spacing-md 0.16rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: $radius-md;
+  box-shadow: 0 4px 12px rgba(74, 100, 180, 0.06);
+  text-align: center;
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.24rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.icon-blue   { background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%); }
+.icon-purple { background: linear-gradient(135deg, #6C5CE7 0%, #A55EEA 100%); }
+.icon-cyan   { background: linear-gradient(135deg, #00CEC9 0%, #0984E3 100%); }
+
+.feature-title {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-top: 0.04rem;
+}
+
+.feature-desc {
+  font-size: 0.28rem;   // 10.5px
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+// =============================================================
+// Footer
+// =============================================================
+.footer {
+  width: 100%;
+  max-width: 10rem;
+  margin-top: $spacing-md;
+  padding: 0 $spacing-md env(safe-area-inset-bottom);
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: 0.16rem;
+}
+
+.footer-link {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.footer-sep {
+  color: #C8D0DD;
+}
+
+.footer-copy {
+  font-size: 0.28rem;
+  color: $color-text-placeholder;
+  margin: 0;
+}
+
+// =============================================================
 // 协议弹窗
-// ============================================================
-.agreement-overlay {
+// =============================================================
+.popup-mask {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -707,7 +848,7 @@ function showToast(msg: string, duration = 2500) {
   to { opacity: 1; }
 }
 
-.agreement-popup {
+.popup {
   width: 100%;
   background: #fff;
   border-radius: $radius-lg $radius-lg 0 0;
@@ -722,7 +863,7 @@ function showToast(msg: string, duration = 2500) {
   to { transform: translateY(0); }
 }
 
-.popup-header {
+.popup-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -731,7 +872,7 @@ function showToast(msg: string, duration = 2500) {
   h3 { font-size: $font-size-md; font-weight: 600; }
 }
 
-.close-btn {
+.popup-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -754,7 +895,7 @@ function showToast(msg: string, duration = 2500) {
   font-size: $font-size-xs;
 }
 
-.popup-footer {
+.popup-foot {
   padding: $spacing-md;
   border-top: 1px solid $color-border;
 }
@@ -771,10 +912,10 @@ function showToast(msg: string, duration = 2500) {
   cursor: pointer;
 }
 
-// ============================================================
+// =============================================================
 // Toast
-// ============================================================
-.toast-tip {
+// =============================================================
+.toast {
   position: fixed;
   top: 50%;
   left: 50%;
