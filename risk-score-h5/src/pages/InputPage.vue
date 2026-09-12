@@ -1,5 +1,5 @@
 <!--
-  InputPage.vue - 信息输入页（路由：/，name: index）
+  InputPage.vue - 信息输入页（整体放大 2x + 整体下移居中）
   风格：现代金融科技风 — 顶部蓝紫渐变 + 浮动装饰圆斑 + 白色卡片表单
   数据流：校验通过 → 纯前端跳转 ResultPage（零后端回传）
 -->
@@ -24,7 +24,7 @@
         <p class="hero-subtitle">全面 · 精准 · 银行级安全</p>
       </div>
 
-      <!-- 装饰数据卡片（Hero 底部浮动） -->
+      <!-- 装饰数据卡片 -->
       <div class="hero-stats">
         <div class="stat-item">
           <div class="stat-num">5<span>+</span></div>
@@ -43,18 +43,18 @@
       </div>
     </div>
 
-    <!-- 白色表单卡片（悬浮于 Hero 之上） -->
+    <!-- 白色表单卡片 -->
     <div class="form-card">
       <!-- 顶部提示条 -->
       <div class="tip-bar">
-        <AppIcon name="bell" color="#4A90E2" size="0.45rem" />
+        <AppIcon name="bell" color="#4A90E2" size="0.8rem" />
         <span class="tip-text">为保证数据准确，请输入真实信息</span>
       </div>
 
-      <!-- 3 个带图标的圆角胶囊输入框 -->
+      <!-- 3 个带图标的圆角胶囊输入框（整体放大 2x） -->
       <div class="fields">
         <div class="field-pill" :class="{ focus: focusField === 'name' }">
-          <span class="field-icon"><AppIcon name="user" color="#4A90E2" size="0.5rem" /></span>
+          <span class="field-icon"><AppIcon name="user" color="#4A90E2" size="0.96rem" /></span>
           <input
             v-model="form.name"
             class="field-input"
@@ -65,7 +65,7 @@
           />
         </div>
         <div class="field-pill" :class="{ focus: focusField === 'idCard' }">
-          <span class="field-icon"><AppIcon name="idcard" color="#4A90E2" size="0.5rem" /></span>
+          <span class="field-icon"><AppIcon name="idcard" color="#4A90E2" size="0.96rem" /></span>
           <input
             v-model="form.idCard"
             class="field-input"
@@ -77,7 +77,7 @@
           />
         </div>
         <div class="field-pill" :class="{ focus: focusField === 'phone' }">
-          <span class="field-icon"><AppIcon name="phone" color="#4A90E2" size="0.5rem" /></span>
+          <span class="field-icon"><AppIcon name="phone" color="#4A90E2" size="0.96rem" /></span>
           <input
             v-model="form.phone"
             class="field-input"
@@ -93,7 +93,7 @@
       <!-- 友情提示（柔和橙底） -->
       <div class="friend-tip">
         <div class="friend-tip-header">
-          <span class="friend-tip-icon"><AppIcon name="info" color="#C2580E" size="0.4rem" /></span>
+          <span class="friend-tip-icon"><AppIcon name="info" color="#C2580E" size="0.8rem" /></span>
           <span class="friend-tip-title">友情提示</span>
         </div>
         <p>我司不是提供央行征信和个人爬虫等隐私数据查询，也不提供贷款及信用修复复业务。</p>
@@ -103,7 +103,7 @@
       <!-- 协议勾选 -->
       <div class="agreement" @click="toggleAgreement">
         <div class="agreement-box" :class="{ checked: agreed }">
-          <AppIcon v-if="agreed" name="check" color="#fff" size="0.3rem" />
+          <AppIcon v-if="agreed" name="check" color="#fff" size="0.6rem" />
         </div>
         <span class="agreement-text">
           我已阅读并同意
@@ -114,7 +114,7 @@
         </span>
       </div>
 
-      <!-- 立即查询按钮（强 CTA：渐变 + 光晕 + 箭头） -->
+      <!-- 立即查询按钮（整体放大 2x） -->
       <button
         class="pay-btn"
         :class="{ disabled: !canSubmit }"
@@ -123,14 +123,14 @@
       >
         <span class="pay-btn-shine" />
         <span class="pay-btn-text">立即查询</span>
-        <span class="pay-btn-arrow"><AppIcon name="arrowRight" color="#fff" size="0.45rem" /></span>
+        <span class="pay-btn-arrow"><AppIcon name="arrowRight" color="#fff" size="0.85rem" /></span>
       </button>
 
       <!-- 底部信任标识 -->
       <div class="trust-row">
-        <span class="trust-item"><AppIcon name="lock" color="#999" size="0.32rem" /> 信息加密</span>
-        <span class="trust-item"><AppIcon name="shield" color="#999" size="0.32rem" /> 隐私保护</span>
-        <span class="trust-item"><AppIcon name="database" color="#999" size="0.32rem" /> 银行数据</span>
+        <span class="trust-item"><AppIcon name="lock" color="#999" size="0.64rem" /> 信息加密</span>
+        <span class="trust-item"><AppIcon name="shield" color="#999" size="0.64rem" /> 隐私保护</span>
+        <span class="trust-item"><AppIcon name="database" color="#999" size="0.64rem" /> 银行数据</span>
       </div>
     </div>
 
@@ -139,7 +139,7 @@
       <div class="agreement-popup">
         <div class="popup-header">
           <h3>{{ popupTitle }}</h3>
-          <span class="close-btn" @click="popupType = ''"><AppIcon name="close" color="#666" size="0.4rem" /></span>
+          <span class="close-btn" @click="popupType = ''"><AppIcon name="close" color="#666" size="0.8rem" /></span>
         </div>
         <div class="popup-body">
           <p>{{ popupContent }}</p>
@@ -233,7 +233,7 @@ function showToast(msg: string, duration = 2500) {
 @use '@/assets/styles/variables.scss' as *;
 
 // ============================================================
-// 根容器：现代渐变背景
+// 根容器：整体放大 + 居中 + 下移
 // ============================================================
 .page-input {
   position: relative;
@@ -242,6 +242,17 @@ function showToast(msg: string, duration = 2500) {
   background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 30%, #A8B6F0 55%, #E8EEFB 78%, #FFFFFF 100%);
   padding-bottom: $spacing-xl;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2.4rem; // 整体下移（≈90px）
+}
+
+.hero,
+.form-card {
+  width: 100%;
+  max-width: 11rem; // 412px（整体居中且更宽）
 }
 
 // ============================================================
@@ -262,8 +273,8 @@ function showToast(msg: string, duration = 2500) {
 .hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.18rem 0.5rem 0.18rem 0.22rem;
+  gap: 0.32rem;
+  padding: 0.28rem 0.8rem 0.28rem 0.32rem;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -274,8 +285,8 @@ function showToast(msg: string, duration = 2500) {
 
 .badge-icon {
   display: inline-flex;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.85rem;
+  height: 0.85rem;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
@@ -284,7 +295,7 @@ function showToast(msg: string, duration = 2500) {
 }
 
 .badge-text {
-  font-size: $font-size-xs;
+  font-size: $font-size-md;
   font-weight: 600;
   color: #fff;
   letter-spacing: 0.04em;
@@ -292,39 +303,38 @@ function showToast(msg: string, duration = 2500) {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-// 主标题
+// 主标题（整体放大 2x：原 1.733rem → 3.466rem）
 .hero-titles {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-top: $spacing-xs;
+  margin-top: $spacing-sm;
 }
 
 .hero-title {
-  font-size: 1.733rem;   // ~65px
+  font-size: 3.466rem;   // ~130px（放大 2x）
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: 0.04em;
   margin: 0;
-  color: #fff;
-  text-shadow: 0 4px 16px rgba(74, 144, 226, 0.4);
-  word-break: keep-all;
   background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 16px rgba(74, 144, 226, 0.4));
+  word-break: keep-all;
 }
 
 .hero-title-accent {
-  font-size: 1.867rem;   // ~70px
+  font-size: 3.733rem;   // ~140px（放大 2x）
   letter-spacing: 0.08em;
 }
 
 .hero-underline {
-  margin-top: 0.16rem;
-  width: 1.6rem;
-  height: 0.08rem;
+  margin-top: 0.32rem;
+  width: 3.2rem;
+  height: 0.16rem;
   background: linear-gradient(90deg, transparent 0%, #fff 50%, transparent 100%);
   border-radius: 2px;
   position: relative;
@@ -335,8 +345,8 @@ function showToast(msg: string, duration = 2500) {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 0.16rem;
-    height: 0.16rem;
+    width: 0.32rem;
+    height: 0.32rem;
     background: #fff;
     border-radius: 50%;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
@@ -344,27 +354,27 @@ function showToast(msg: string, duration = 2500) {
 }
 
 .hero-subtitle {
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   color: rgba(255, 255, 255, 0.85);
-  margin-top: 0.16rem;
+  margin-top: 0.32rem;
   letter-spacing: 0.16em;
   font-weight: 500;
 }
 
-// Hero 底部数据条
+// Hero 底部数据条（整体放大 2x）
 .hero-stats {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 8rem;
-  margin-top: $spacing-sm;
-  padding: 0.24rem $spacing-md;
+  max-width: 9rem;
+  margin-top: $spacing-md;
+  padding: 0.4rem $spacing-lg;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: $radius-md;
+  border-radius: 0.32rem;
 }
 
 .stat-item {
@@ -372,17 +382,17 @@ function showToast(msg: string, duration = 2500) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.04rem;
+  gap: 0.08rem;
 }
 
 .stat-num {
-  font-size: $font-size-lg;
+  font-size: $font-size-xl;
   font-weight: 800;
   color: #fff;
   line-height: 1.2;
 
   span {
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     font-weight: 500;
     opacity: 0.9;
     margin-left: 0.04rem;
@@ -390,29 +400,29 @@ function showToast(msg: string, duration = 2500) {
 }
 
 .stat-label {
-  font-size: 0.28rem;   // 10.5px
+  font-size: $font-size-xs;
   color: rgba(255, 255, 255, 0.85);
   letter-spacing: 0.04em;
 }
 
 .stat-divider {
   width: 1px;
-  height: 0.64rem;
+  height: 1.2rem;
   background: rgba(255, 255, 255, 0.3);
   margin: 0 $spacing-xs;
 }
 
 // ============================================================
-// 白色表单卡片（向上漂浮，盖住 Hero 一部分）
+// 白色表单卡片（向上漂浮，整体放大）
 // ============================================================
 .form-card {
   position: relative;
   z-index: 2;
-  margin: -0.6rem $spacing-md 0;
+  margin: -1rem $spacing-md 0;
   background: #fff;
-  border-radius: 0.48rem;
-  padding: $spacing-md $spacing-md $spacing-lg;
-  box-shadow: 0 12px 32px rgba(74, 100, 180, 0.18), 0 4px 8px rgba(74, 100, 180, 0.08);
+  border-radius: 0.64rem;
+  padding: $spacing-lg $spacing-md $spacing-xl;
+  box-shadow: 0 16px 40px rgba(74, 100, 180, 0.2), 0 4px 12px rgba(74, 100, 180, 0.08);
 }
 
 // 提示条
@@ -420,32 +430,32 @@ function showToast(msg: string, duration = 2500) {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.16rem;
+  gap: 0.24rem;
   padding: $spacing-xs 0 $spacing-md;
   color: var(--color-text-secondary);
 }
 
 .tip-text {
-  font-size: $font-size-xs;
+  font-size: $font-size-md;
   color: #4A90E2;
   font-weight: 500;
 }
 
-// 输入框（带图标 + focus 态）
+// 输入框（整体放大 2x：高度 1.173rem → 2.346rem）
 .fields {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-md;
 }
 
 .field-pill {
   display: flex;
   align-items: center;
-  gap: 0.24rem;
-  height: 1.173rem; // 44px (移动端标准触摸高度)
+  gap: 0.4rem;
+  height: 2.346rem; // 88px（放大 2x）
   background: #F4F7FC;
-  border: 1.5px solid transparent;
-  border-radius: 0.533rem;
+  border: 2px solid transparent;
+  border-radius: 0.853rem; // 32px
   padding: 0 $spacing-md;
   transition: all $duration-fast;
 
@@ -453,7 +463,7 @@ function showToast(msg: string, duration = 2500) {
   &.focus {
     background: #fff;
     border-color: #4A90E2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.12);
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
   }
 }
 
@@ -470,36 +480,36 @@ function showToast(msg: string, duration = 2500) {
   background: transparent;
   border: 0;
   outline: none;
-  font-size: $font-size-sm;
+  font-size: 0.853rem; // 32px（放大 2x，原 16px）
   color: $color-text-primary;
   font-weight: 500;
   letter-spacing: 0.02em;
   &::placeholder {
     color: #B8C2D0;
-    font-size: $font-size-sm;
+    font-size: 0.853rem;
     font-weight: 400;
   }
 }
 
 // ============================================================
-// 友情提示（柔和橙底）
+// 友情提示（柔和橙底，放大）
 // ============================================================
 .friend-tip {
   margin-top: $spacing-md;
-  padding: $spacing-sm $spacing-md;
+  padding: $spacing-md;
   background: linear-gradient(135deg, #FFF7EC 0%, #FFEBD9 100%);
   border: 1px solid #FFD9B3;
-  border-radius: $radius-md;
+  border-radius: 0.32rem;
   color: #C2580E;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   line-height: 1.65;
 }
 
 .friend-tip-header {
   display: flex;
   align-items: center;
-  gap: 0.12rem;
-  margin-bottom: 0.12rem;
+  gap: 0.16rem;
+  margin-bottom: 0.16rem;
   font-weight: 600;
 }
 
@@ -508,24 +518,24 @@ function showToast(msg: string, duration = 2500) {
 }
 
 .friend-tip-title {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   font-weight: 700;
   color: #C2580E;
 }
 
 .friend-tip-warn {
-  margin-top: 0.12rem;
+  margin-top: 0.16rem;
   font-weight: 600;
   color: #A64800;
 }
 
 // ============================================================
-// 协议勾选
+// 协议勾选（放大）
 // ============================================================
 .agreement {
   display: flex;
   align-items: flex-start;
-  gap: $spacing-xs;
+  gap: $spacing-sm;
   margin-top: $spacing-md;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -533,11 +543,11 @@ function showToast(msg: string, duration = 2500) {
 
 .agreement-box {
   flex-shrink: 0;
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-top: 0.04rem;
-  border: 1.5px solid #C8C8C8;
-  border-radius: 0.107rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-top: 0.08rem;
+  border: 2px solid #C8C8C8;
+  border-radius: 0.16rem;
   background: #fff;
   display: flex;
   align-items: center;
@@ -551,7 +561,7 @@ function showToast(msg: string, duration = 2500) {
 
 .agreement-text {
   flex: 1;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   color: $color-text-secondary;
   line-height: 1.6;
 }
@@ -564,25 +574,25 @@ function showToast(msg: string, duration = 2500) {
 }
 
 // ============================================================
-// 立即查询按钮（强 CTA：渐变 + 光晕 + 箭头）
+// 立即查询按钮（整体放大 2x：高度 1.173rem → 2.346rem）
 // ============================================================
 .pay-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
+  gap: 0.32rem;
   width: 100%;
   margin-top: $spacing-lg;
-  height: 1.173rem; // 44px
+  height: 2.346rem; // 88px（放大 2x）
   border: 0;
-  border-radius: 0.587rem; // 22px
+  border-radius: 1.173rem; // 44px
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
   color: #fff;
-  font-size: $font-size-md;
+  font-size: 0.96rem; // 36px（放大 2x，原 18px）
   font-weight: 700;
   letter-spacing: 0.08em;
-  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4), 0 2px 6px rgba(74, 144, 226, 0.3);
+  box-shadow: 0 12px 32px rgba(108, 92, 231, 0.45), 0 4px 8px rgba(74, 144, 226, 0.3);
   cursor: pointer;
   overflow: hidden;
   transition: all $duration-fast;
@@ -600,8 +610,8 @@ function showToast(msg: string, duration = 2500) {
   }
 
   &:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+    transform: translateY(2px);
+    box-shadow: 0 6px 16px rgba(108, 92, 231, 0.45);
   }
 
   &.disabled,
@@ -635,29 +645,29 @@ function showToast(msg: string, duration = 2500) {
 
 @keyframes arrow-pulse {
   0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
+  50% { transform: translateX(6px); }
 }
 
 // ============================================================
-// 底部信任标识
+// 底部信任标识（放大）
 // ============================================================
 .trust-row {
   display: flex;
   justify-content: center;
-  gap: $spacing-md;
-  margin-top: $spacing-md;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
 }
 
 .trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.08rem;
-  font-size: 0.28rem;
+  gap: 0.16rem;
+  font-size: $font-size-xs;
   color: #999;
 }
 
 // ============================================================
-// 协议弹窗
+// 协议弹窗（放大）
 // ============================================================
 .agreement-overlay {
   position: fixed;
@@ -677,7 +687,7 @@ function showToast(msg: string, duration = 2500) {
 .agreement-popup {
   width: 100%;
   background: #fff;
-  border-radius: $radius-lg $radius-lg 0 0;
+  border-radius: 0.64rem 0.64rem 0 0;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
@@ -695,7 +705,7 @@ function showToast(msg: string, duration = 2500) {
   justify-content: space-between;
   padding: $spacing-md;
   border-bottom: 1px solid $color-border;
-  h3 { font-size: $font-size-md; font-weight: 600; }
+  h3 { font-size: $font-size-lg; font-weight: 600; }
 }
 
 .close-btn {
@@ -710,7 +720,7 @@ function showToast(msg: string, duration = 2500) {
   flex: 1;
   overflow-y: auto;
   padding: $spacing-md;
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   color: $color-text-secondary;
   line-height: 1.8;
 }
@@ -718,7 +728,7 @@ function showToast(msg: string, duration = 2500) {
 .popup-todo {
   margin-top: $spacing-md;
   color: $color-text-placeholder;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
 }
 
 .popup-footer {
@@ -728,13 +738,13 @@ function showToast(msg: string, duration = 2500) {
 
 .popup-confirm {
   width: 100%;
-  height: 1.173rem;
+  height: 2rem;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
   color: #fff;
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   font-weight: 600;
   border: 0;
-  border-radius: $radius-md;
+  border-radius: 0.32rem;
   cursor: pointer;
 }
 
@@ -748,7 +758,7 @@ function showToast(msg: string, duration = 2500) {
   transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.78);
   color: #fff;
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   padding: $spacing-sm $spacing-lg;
   border-radius: $radius-md;
   z-index: 9999;
@@ -761,10 +771,5 @@ function showToast(msg: string, duration = 2500) {
 @keyframes toast-in {
   from { opacity: 0; transform: translate(-50%, -40%); }
   to { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-// 更大屏幕适配
-@media (min-width: 540px) {
-  .hero-stats { max-width: 9rem; }
 }
 </style>

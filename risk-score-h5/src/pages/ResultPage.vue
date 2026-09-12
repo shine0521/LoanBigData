@@ -1,5 +1,5 @@
 <!--
-  ResultPage.vue - 评分结果页（路由：/result，name: result）
+  ResultPage.vue - 评分结果页（整体放大 2x + 居中下移）
   风格：现代金融科技风 — Hero 评分 + 银行详情卡片 + 安全提示
   流程：先 5-10 秒加载动画 → 加载完成展示评分
 -->
@@ -15,7 +15,7 @@
           <div class="loading-ring loading-ring-2" />
           <div class="loading-ring loading-ring-3" />
           <div class="loading-center">
-            <AppIcon name="database" color="#4A90E2" size="0.7rem" />
+            <AppIcon name="database" color="#4A90E2" size="1.4rem" />
           </div>
         </div>
         <p class="loading-title">个人综合评分</p>
@@ -35,7 +35,7 @@
 
         <!-- 顶部小标签 -->
         <div class="hero-top">
-          <span class="hero-top-badge"><AppIcon name="bolt" color="#FFD740" size="0.36rem" /> 实时评估</span>
+          <span class="hero-top-badge"><AppIcon name="bolt" color="#FFD740" size="0.64rem" /> 实时评估</span>
         </div>
 
         <p class="hero-label">您的综合评分</p>
@@ -63,7 +63,7 @@
 
         <!-- 等级标签 + 评价 -->
         <div class="hero-level-badge" :class="levelBadgeClass">
-          <AppIcon :name="levelIconName" :color="levelIconColor" size="0.36rem" />
+          <AppIcon :name="levelIconName" :color="levelIconColor" size="0.64rem" />
           <span>{{ comprehensive.levelName }}</span>
         </div>
         <p class="hero-comment">{{ levelComment }}</p>
@@ -71,11 +71,11 @@
         <!-- 底部白色卡片（向上凸出） -->
         <div class="hero-bottom-card">
           <div class="card-header">
-            <span class="card-title"><AppIcon name="database" color="#4A90E2" size="0.42rem" /> 合作机构评分详情</span>
+            <span class="card-title"><AppIcon name="database" color="#4A90E2" size="0.8rem" /> 合作机构评分详情</span>
             <span class="card-desc">数据来源：银行大数据</span>
           </div>
 
-          <!-- 四行银行评分 -->
+          <!-- 四行银行评分（整体放大 2x） -->
           <div class="bank-list">
             <div
               v-for="bank in banks"
@@ -83,7 +83,7 @@
               class="bank-item"
             >
               <div class="bank-left">
-                <BankIcon :score-type="bank.scoreType" size="0.96rem" />
+                <BankIcon :score-type="bank.scoreType" size="1.92rem" />
                 <span class="bank-name">{{ getBankMeta(bank.scoreType).displayName }}</span>
               </div>
               <div class="bank-right">
@@ -97,17 +97,17 @@
             </div>
           </div>
 
-          <!-- 重新查询按钮 -->
+          <!-- 重新查询按钮（整体放大 2x） -->
           <div class="action-row">
             <button class="restart-btn" @click="handleRestart">
-              <AppIcon name="refresh" color="#fff" size="0.42rem" />
+              <AppIcon name="refresh" color="#fff" size="0.85rem" />
               <span>重新查询</span>
             </button>
           </div>
 
           <!-- 安全提示 -->
           <p class="security-tip">
-            <AppIcon name="info" color="#999" size="0.32rem" />
+            <AppIcon name="info" color="#999" size="0.64rem" />
             <span>评分结果仅供参考，实际业务以银行官方审核为准</span>
           </p>
         </div>
@@ -139,7 +139,6 @@ import DecorationBg from '@/components/DecorationBg.vue'
 const router = useRouter()
 const store = useRiskStore()
 
-// ---------- 状态 ----------
 const loading = ref(false)
 const errorMsg = ref('')
 const elapsedSeconds = ref(0)
@@ -158,12 +157,10 @@ let elapsedTimer: ReturnType<typeof setInterval> | null = null
 let progressTimer: ReturnType<typeof setInterval> | null = null
 let tipTimer: ReturnType<typeof setInterval> | null = null
 
-// ---------- 计算属性 ----------
 const comprehensive = computed(() => store.resultData?.comprehensive ?? null)
 const banks = computed(() => store.resultData?.banks ?? [])
 
-// 圆环进度（满分 1000）
-const circumference = 2 * Math.PI * 86 // ~540
+const circumference = 2 * Math.PI * 86
 const ringOffset = computed(() => {
   const s = comprehensive.value?.score ?? 0
   return circumference * (1 - s / 1000)
@@ -204,7 +201,6 @@ const levelComment = computed(() => {
   return '信用需关注 · 建议提升履约记录'
 })
 
-// ---------- 银行映射 ----------
 const bankMeta: Record<string, { displayName: string }> = {
   boc:  { displayName: '中行评分' },
   icbc: { displayName: '工行评分' },
@@ -216,7 +212,6 @@ function getBankMeta(scoreType: string): { displayName: string } {
   return bankMeta[scoreType] ?? { displayName: scoreType }
 }
 
-// ---------- 银行分数辅助 ----------
 function getBankScoreClass(score: number) {
   if (score >= 800) return 'bank-score-high'
   if (score >= 600) return 'bank-score-mid'
@@ -235,7 +230,6 @@ function getLevelText(score: number): string {
   return '高风险'
 }
 
-// ---------- 加载逻辑 ----------
 onMounted(async () => {
   if (store.resultData) return
 
@@ -283,7 +277,6 @@ onMounted(async () => {
 
 onUnmounted(() => stopTimers())
 
-// ---------- 定时器 ----------
 function startTimers() {
   elapsedSeconds.value = 0
   elapsedTimer = setInterval(() => { elapsedSeconds.value++ }, 1000)
@@ -328,50 +321,61 @@ function handleRestart() {
   min-height: 100vh;
   background: #F4F7FC;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero,
+.hero-bottom-card,
+.loading-card,
+.empty-page {
+  width: 100%;
+  max-width: 11rem; // 412px 整体居中
 }
 
 // ============================================================
-// 加载页（居中卡片）
+// 加载页（居中卡片，整体放大）
 // ============================================================
 .loading-page {
   position: relative;
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: $spacing-md;
+  background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 30%, #A8B6F0 55%, #F4F7FC 100%);
 }
 
 .loading-card {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 8rem;
   background: #fff;
-  border-radius: 0.48rem;
-  padding: $spacing-xl $spacing-md;
+  border-radius: 0.64rem;
+  padding: $spacing-xl $spacing-lg;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-sm;
-  box-shadow: 0 16px 48px rgba(74, 100, 180, 0.18);
+  gap: $spacing-md;
+  box-shadow: 0 24px 64px rgba(74, 100, 180, 0.24);
 }
 
 .loading-icon-wrap {
   position: relative;
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 6.4rem;     // 240px（放大 2x，原 120px）
+  height: 6.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: $spacing-xs;
+  margin-bottom: $spacing-sm;
 }
 
 .loading-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 3px solid transparent;
+  border: 5px solid transparent;
 }
 
 .loading-ring-1 {
@@ -381,13 +385,13 @@ function handleRestart() {
 
 .loading-ring-2 {
   border-right-color: #6C5CE7;
-  inset: 0.24rem;
+  inset: 0.48rem;
   animation: spin 1.6s linear reverse infinite;
 }
 
 .loading-ring-3 {
   border-bottom-color: #A55EEA;
-  inset: 0.48rem;
+  inset: 0.96rem;
   animation: spin 2s linear infinite;
 }
 
@@ -410,7 +414,7 @@ function handleRestart() {
 }
 
 .loading-title {
-  font-size: $font-size-xl;
+  font-size: 1.28rem; // 48px（放大 2x）
   font-weight: 800;
   color: $color-text-primary;
   margin: 0;
@@ -418,7 +422,7 @@ function handleRestart() {
 }
 
 .loading-tip {
-  font-size: $font-size-sm;
+  font-size: $font-size-md; // 18px
   color: $color-text-secondary;
   margin: 0;
   text-align: center;
@@ -440,7 +444,7 @@ function handleRestart() {
 .loading-progress {
   width: 80%;
   max-width: 320px;
-  height: 0.16rem;
+  height: 0.24rem;    // 9px（放大 2x，原 4.5px）
   background: rgba(74, 144, 226, 0.15);
   border-radius: $radius-full;
   overflow: hidden;
@@ -455,7 +459,7 @@ function handleRestart() {
 }
 
 .loading-status {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;  // 16px（放大）
   color: #4A90E2;
   margin: 0;
   font-weight: 600;
@@ -463,14 +467,14 @@ function handleRestart() {
 }
 
 // ============================================================
-// Hero 区（带背景装饰）
+// Hero 区（带背景装饰，整体居中）
 // ============================================================
 .hero {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: $spacing-md $spacing-md $spacing-xl;
+  padding: 2.4rem $spacing-md $spacing-xl;  // 顶部下移
   background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 35%, #A8B6F0 60%, #F4F7FC 100%);
   overflow: hidden;
 }
@@ -479,26 +483,26 @@ function handleRestart() {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: $spacing-xs;
+  margin-bottom: $spacing-sm;
   z-index: 2;
 }
 
 .hero-top-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.08rem;
-  padding: 0.12rem 0.32rem;
+  gap: 0.16rem;
+  padding: 0.2rem 0.5rem;
   background: rgba(255, 215, 64, 0.15);
   border: 1px solid rgba(255, 215, 64, 0.4);
   border-radius: $radius-full;
-  font-size: 0.28rem;
+  font-size: $font-size-xs;
   color: #FFD740;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
 
 .hero-label {
-  font-size: $font-size-md;
+  font-size: $font-size-lg; // 20px
   color: rgba(255, 255, 255, 0.92);
   font-weight: 500;
   margin: 0;
@@ -509,12 +513,12 @@ function handleRestart() {
 // 评分大数字（带圆环）
 .hero-score-wrap {
   position: relative;
-  width: 4.8rem;
-  height: 4.8rem;
+  width: 6.4rem;   // 240px（放大）
+  height: 6.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: $spacing-xs;
+  margin-top: $spacing-sm;
   z-index: 2;
 }
 
@@ -549,7 +553,7 @@ function handleRestart() {
 }
 
 .score-num {
-  font-size: 2.4rem; // ~90px
+  font-size: 3.2rem; // 120px（放大）
   font-weight: 900;
   letter-spacing: -0.04em;
   background: linear-gradient(180deg, #fff 0%, #F0F4FF 100%);
@@ -561,7 +565,7 @@ function handleRestart() {
 
 .score-divider,
 .score-total {
-  font-size: 0.853rem; // ~32px
+  font-size: 1.28rem; // 48px
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -569,10 +573,10 @@ function handleRestart() {
 .hero-level-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.12rem;
-  padding: 0.18rem $spacing-lg;
-  border-radius: 0.533rem;
-  font-size: $font-size-sm;
+  gap: 0.16rem;
+  padding: 0.24rem $spacing-lg;
+  border-radius: 0.64rem;
+  font-size: $font-size-md; // 18px
   font-weight: 700;
   letter-spacing: 0.06em;
   margin-top: $spacing-md;
@@ -582,11 +586,13 @@ function handleRestart() {
 }
 
 .hero-comment {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm; // 16px
   color: rgba(255, 255, 255, 0.85);
-  margin: 0.24rem 0 0 0;
+  margin: 0.32rem 0 0 0;
   letter-spacing: 0.04em;
   z-index: 2;
+  text-align: center;
+  padding: 0 $spacing-md;
 }
 
 // 等级标签颜色
@@ -595,47 +601,43 @@ function handleRestart() {
 .badge-high { background: rgba(255, 110, 110, 0.2); border: 1px solid rgba(255, 110, 110, 0.5); color: #FFB0B0; }
 
 // ============================================================
-// 白色底部卡片（向上凸出，盖住 hero 底部）
+// 白色底部卡片（向上凸出，整体放大）
 // ============================================================
 .hero-bottom-card {
   position: relative;
   z-index: 3;
   margin-top: $spacing-lg;
   background: #fff;
-  border-radius: 0.48rem 0.48rem 0 0;
-  padding: $spacing-md $spacing-md $spacing-lg;
+  border-radius: 0.64rem 0.64rem 0 0;
+  padding: $spacing-lg $spacing-md $spacing-xl;
   box-shadow: 0 -8px 24px rgba(74, 100, 180, 0.12);
-  width: calc(100% + #{$spacing-md} * 2);
-  margin-left: -$spacing-md;
-  margin-right: -$spacing-md;
-  padding-bottom: $spacing-xl;
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: $spacing-sm;
+  padding-bottom: $spacing-md;
   border-bottom: 1px solid $color-border-light;
-  margin-bottom: $spacing-sm;
+  margin-bottom: $spacing-md;
 }
 
 .card-title {
   display: inline-flex;
   align-items: center;
-  gap: 0.16rem;
-  font-size: $font-size-md;
+  gap: 0.24rem;
+  font-size: $font-size-lg; // 20px
   font-weight: 700;
   color: $color-text-primary;
 }
 
 .card-desc {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm; // 16px
   color: $color-text-placeholder;
 }
 
 // ============================================================
-// 四行银行评分
+// 四行银行评分（整体放大 2x）
 // ============================================================
 .bank-list {
   display: flex;
@@ -646,7 +648,7 @@ function handleRestart() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-sm 0;
+  padding: $spacing-md 0;   // 16px 上下（放大 2x）
   border-bottom: 1px solid $color-border-light;
 
   &:last-child {
@@ -657,11 +659,11 @@ function handleRestart() {
 .bank-left {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $spacing-md;
 }
 
 .bank-name {
-  font-size: $font-size-sm;
+  font-size: 0.853rem; // 32px（放大 2x，原 16px）
   font-weight: 600;
   color: $color-text-primary;
   white-space: nowrap;
@@ -671,11 +673,11 @@ function handleRestart() {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.08rem;
+  gap: 0.16rem;
 }
 
 .bank-score {
-  font-size: $font-size-xl;
+  font-size: 1.28rem; // 48px（放大 2x，原 24px）
   font-weight: 800;
   line-height: 1;
 
@@ -685,9 +687,9 @@ function handleRestart() {
 }
 
 .bank-level {
-  font-size: 0.28rem;
+  font-size: $font-size-xs; // 14px
   font-weight: 600;
-  padding: 0.04rem 0.213rem;
+  padding: 0.08rem 0.32rem;
   border-radius: $radius-sm;
 
   &.bank-level-high { background: rgba(0, 200, 83, 0.1);  color: $color-risk-low; }
@@ -696,7 +698,7 @@ function handleRestart() {
 }
 
 // ============================================================
-// 重新查询按钮
+// 重新查询按钮（整体放大 2x）
 // ============================================================
 .action-row {
   margin-top: $spacing-lg;
@@ -706,24 +708,24 @@ function handleRestart() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.16rem;
+  gap: 0.24rem;
   width: 100%;
-  height: 1.173rem;
+  height: 2.346rem; // 88px
   border: 0;
-  border-radius: 0.587rem;
+  border-radius: 1.173rem;
   background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
   color: #fff;
-  font-size: $font-size-sm;
+  font-size: 0.96rem; // 36px
   font-weight: 700;
   letter-spacing: 0.04em;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.32);
+  box-shadow: 0 12px 28px rgba(108, 92, 231, 0.4);
   cursor: pointer;
   transition: all $duration-fast;
   -webkit-tap-highlight-color: transparent;
 
   &:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.32);
+    transform: translateY(2px);
+    box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
   }
 }
 
@@ -734,9 +736,9 @@ function handleRestart() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.08rem;
+  gap: 0.16rem;
   margin-top: $spacing-md;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm; // 16px
   color: $color-text-placeholder;
   line-height: 1.5;
 }
@@ -754,16 +756,16 @@ function handleRestart() {
   gap: $spacing-sm;
   padding: $spacing-xl $spacing-md;
   text-align: center;
-  background: #F4F7FC;
+  background: linear-gradient(180deg, #4A90E2 0%, #F4F7FC 100%);
 }
 
 .empty-icon {
-  font-size: 1.6rem;
+  font-size: 2.4rem;
   z-index: 1;
 }
 
 .empty-title {
-  font-size: $font-size-lg;
+  font-size: $font-size-xl; // 24px
   font-weight: 700;
   color: $color-text-primary;
   margin: 0;
@@ -771,7 +773,7 @@ function handleRestart() {
 }
 
 .empty-sub {
-  font-size: $font-size-sm;
+  font-size: $font-size-md; // 18px
   color: $color-text-secondary;
   margin: 0;
   z-index: 1;
