@@ -353,12 +353,14 @@ function showToast(msg: string, duration = 2500) {
 @use '@/assets/styles/variables.scss' as *;
 
 // =============================================================
-// 根容器
+// 根容器：撑满 viewport
 // =============================================================
 .page {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  // 动态 viewport：iOS Safari 适配（教程 1.4.5 安全区补充）
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -367,6 +369,7 @@ function showToast(msg: string, duration = 2500) {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+// 所有区块撑满整宽（不再 max-width 限制，适配 320-414px+）
 .hero,
 .card,
 .features,
@@ -374,7 +377,7 @@ function showToast(msg: string, duration = 2500) {
 .loading-card,
 .empty {
   width: 100%;
-  max-width: 10rem;
+  // max-width: 10rem;  ← 已删除，按官方教程适配多屏宽
 }
 
 // =============================================================

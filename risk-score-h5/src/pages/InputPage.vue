@@ -243,11 +243,15 @@ function toggleAgreement(e: Event) {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  // 动态 viewport：iOS Safari 适配
+  min-height: 100dvh;
   background: linear-gradient(180deg, #4A90E2 0%, #6C7CE7 18%, #A8B6F0 38%, #E8EEFB 58%, #F4F7FC 100%);
   display: flex;
   flex-direction: column;
-  align-items: center;          // 子元素水平居中
+  align-items: center;          // 水平居中
+  justify-content: center;      // 垂直居中（hero+card 在 viewport 中央）
   padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
   overflow-x: hidden;
 }
 
