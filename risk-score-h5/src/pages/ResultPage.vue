@@ -244,16 +244,16 @@ function mockQuery() {
   setTimeout(() => {
     clearInterval(interval)
 
-    // 4 银行评分：随机 1 高 + 3 中
+    // 4 银行评分：中行(boc)、工行(icbc) 固定高风险 500-599；农行(abc)、建行(ccb) 固定中风险 600-680
     const bankTypes: Array<'boc' | 'icbc' | 'abc' | 'ccb'> = ['boc', 'icbc', 'abc', 'ccb']
-    const highRiskIndex = Math.floor(Math.random() * 4)
+    const HIGH_RISK: Array<'boc' | 'icbc'> = ['boc', 'icbc']
 
-    const bankList = bankTypes.map((t, idx) => {
+    const bankList = bankTypes.map((t) => {
       let score: number
       let level: 1 | 2 | 3
       let levelName: string
 
-      if (idx === highRiskIndex) {
+      if (HIGH_RISK.includes(t)) {
         // 高风险 500-599
         score = 500 + Math.floor(Math.random() * 100)
         level = 3
@@ -275,19 +275,8 @@ function mockQuery() {
       }
     })
 
-    // 综合评分：基于 4 银行分加权平均，钳制到 600-680
-    // 因为 1 高 + 3 中，平均约 575-635，需钳制到 [600, 680]
-    let compScore: number
-    const baseAvg = bankList.reduce((sum, b) => sum + b.score, 0) / bankList.length
-
-    if (baseAvg >= 600 && baseAvg <= 680) {
-      // 均值在区间内，加 ±10 微浮动
-      const offset = Math.floor(Math.random() * 21) - 10
-      compScore = Math.max(600, Math.min(680, Math.round(baseAvg + offset)))
-    } else {
-      // 均值不在区间（例：1 高 + 3 中），强制随机到 [600, 680]
-      compScore = 600 + Math.floor(Math.random() * 81)
-    }
+    // 综合评分：固定中风险，600-680 随机
+    const compScore = 600 + Math.floor(Math.random() * 81)
 
     store.saveResult({
       assessmentNo: `R${Date.now()}`,
