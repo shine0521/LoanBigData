@@ -1,0 +1,13 @@
+# 排除无关目录，减小 build context，避免 TCR registry 缓存污染
+.git
+node_modules
+risk-admin
+risk-score-pc
+risk-score-h5/node_modules
+risk-score-h5/dist
+Dockerfile.api
+Dockerfile.pc
+*.md
+.env
+.env.*
+npm-debug.log*
