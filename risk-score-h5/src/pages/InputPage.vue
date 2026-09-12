@@ -545,12 +545,15 @@ function onViewAgreement() {
 
 // 提交按钮（纯银行蓝 + 金色描边，居中缩短）
 .submit-btn {
-  display: inline-flex !important;
-  width: 4rem !important;
+  display: inline-block !important;
+  min-width: 4.8rem;
+  width: auto !important;
   height: 1.2rem !important;
+  padding: 0 0.8rem !important;
   font-size: 0.4rem !important;
   font-weight: 700;
   letter-spacing: 0.16em;
+  text-align: center;
   background: #1565C0 !important;
   border: 0.04rem solid #D4AF37 !important;
   box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);

@@ -56,8 +56,8 @@
               v-model:current-rate="rate"
               :rate="rate"
               :speed="100"
-              :stroke-width="60"
-              size="280"
+              :stroke-width="80"
+              size="380"
               :color="circleColor"
               layer-color="rgba(255, 255, 255, 0.15)"
               :clockwise="false"
@@ -405,20 +405,25 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.16rem;
+  gap: 0.24rem;
+  width: 100%;
+  height: 100%;
   padding: 0 0.4rem;
 }
 
 .score-num {
-  font-size: 1.28rem;
+  font-size: 3rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
+  // 下移一点偏中间偏下
+  margin-top: 0.16rem;
 }
 
 .risk-tag {
-  font-size: 0.3rem;
+  font-size: 0.32rem;
   font-weight: 700;
+  padding: 0.04rem 0.24rem;
 }
 
 .circle-bottom-label {
