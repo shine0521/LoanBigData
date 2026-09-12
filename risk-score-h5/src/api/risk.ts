@@ -27,6 +27,7 @@ export interface SubmitResponse {
 /** 单个银行评分（前端统一格式） */
 export interface BankScore {
   scoreType: 'boc' | 'icbc' | 'abc' | 'ccb'
+  bankName?: string       // 银行显示名（前端 mock 时填）
   score: number
   level: number           // 1 低 / 2 中 / 3 高
   levelName: string       // '低风险' | '中风险' | '高风险'
@@ -39,6 +40,7 @@ export interface ComprehensiveScore {
   score: number
   level: number           // 1 低 / 2 中 / 3 高
   levelName: string       // '低风险' | '中风险' | '高风险'
+  description?: string    // 评分描述（可选）
 }
 
 /** 查询评分响应 */
@@ -124,6 +126,7 @@ function normalizeComprehensive(raw: { score: number; level: string | number; le
 function normalizeBank(raw: any): BankScore {
   return {
     scoreType: raw.scoreType ?? bankNameToScoreType(raw.name ?? ''),
+    bankName: raw.bankName ?? raw.name,
     score: Number(raw.score),
     level: typeof raw.level === 'number' ? raw.level : levelTextToNumber(raw.level ?? '中风险'),
     levelName: raw.levelName ?? (typeof raw.level === 'string' ? raw.level : '中风险'),
