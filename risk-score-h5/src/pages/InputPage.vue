@@ -107,16 +107,13 @@
         <p class="warning-emph">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
       </div>
 
-      <!-- 协议（label+原生 checkbox 双向绑定，零事件冲突） -->
+      <!-- 协议（原生 checkbox appearance:none 直接做样式，零事件冲突） -->
       <label class="agreement">
         <input
           v-model="agreed"
           type="checkbox"
           class="agreement-native"
         />
-        <span class="agreement-box" :class="{ checked: agreed }">
-          <span v-if="agreed" class="agreement-tick">✓</span>
-        </span>
         <span class="agreement-text">
           我已阅读并同意
           <a class="agreement-link" @click.prevent.stop="openAgreement('user')">《用户协议》</a>
@@ -574,7 +571,7 @@ function showToast(msg: string, duration = 2500) {
   color: #A64800;
 }
 
-// 协议（label 包裹整个，零事件冲突）
+// 协议（label 包裹，原生 checkbox appearance:none + 自定义样式，零事件冲突）
 .agreement {
   display: flex;
   align-items: flex-start;
@@ -585,39 +582,41 @@ function showToast(msg: string, duration = 2500) {
   user-select: none;
 }
 
+// 原生 checkbox 直接做视觉：appearance: none 后它就是一个 div，
+// 点击事件天然穿透，label 包裹点击文字/勾都能触发 toggle
 .agreement-native {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-  // 视觉上隐藏，但屏幕阅读器可达
-}
-
-.agreement-box {
   flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 0.56rem;     // 21px
+  appearance: none;
+  -webkit-appearance: none;
+  width: 0.56rem;     // 21px 勾选框
   height: 0.56rem;
-  margin-top: 0.06rem;
+  margin: 0.06rem 0 0 0;
   border: 1.5px solid #C8C8C8;
   border-radius: 0.08rem;
   background: #fff;
+  cursor: pointer;
+  position: relative;
   transition: all $duration-fast;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
-  &.checked {
+  &:checked {
     background: $color-primary;
     border-color: $color-primary;
-  }
-}
 
-.agreement-tick {
-  color: #fff;
-  font-size: 0.4rem;   // 15px（明显的大勾）
-  font-weight: 900;
-  line-height: 1;
+    // CSS 画勾（教程 1.4 dpr-safe：用 border + rotate 不用图片）
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0.18rem;
+      top: 0.08rem;
+      width: 0.12rem;
+      height: 0.24rem;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
 }
 
 .agreement-text {
@@ -626,6 +625,7 @@ function showToast(msg: string, duration = 2500) {
   color: $color-text-secondary;
   line-height: 1.6;
   word-break: break-word;
+  min-width: 0; // 教程 flex 子项溢出处理
 }
 
 .agreement-link {

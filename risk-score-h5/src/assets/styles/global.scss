@@ -1,5 +1,7 @@
 // ============================================
-// 全局样式 + CSS 变量（供所有页面使用）
+// 全局样式 + CSS 变量
+// 按腾讯云官方教程 https://cloud.tencent.com/developer/article/2020264
+// 适配：1.4 viewport meta, 1.4.2 rem, 1.4.3 dpr, 1.4.5 safe-area
 // ============================================
 
 // ---------- CSS 变量（JS/Vue 可通过 var() 引用） ----------
@@ -75,11 +77,16 @@
   padding: 0;
 }
 
+/*
+  按教程 1.4.2 rem 适配：
+  - 设计稿 375px → html font-size = 37.5px → 1rem = 37.5px
+  - 配合 viewport meta 让布局视口 = 视觉视口 = 理想视口
+*/
 html {
-  // 移动端 rem 基准：375px 设计稿 → 1rem = 37.5px
-  // 这样 0.213rem = 8px, 0.427rem = 16px, 1.173rem = 44px
   font-size: 37.5px;
   -webkit-text-size-adjust: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 html, body {
@@ -95,20 +102,28 @@ html, body {
     Helvetica,
     Arial,
     sans-serif;
-  color: var(--color-text-primary);
-  background-color: #F4F7FC;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 body {
-  font-size: var(--font-size-sm);
-  // 移动端禁用横向滚动
+  // 教程 1.4.5 安全区：顶部刘海 + 底部 Home Indicator
+  padding-top: env(safe-area-inset-top);
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom); // iOS < 11.2
+  padding-bottom: env(safe-area-inset-bottom);     // iOS >= 11.2
+
+  font-size: var(--font-size-sm); // 16px（防 iOS focus 缩放）
   overflow-x: hidden;
-  // 禁用文字选中（移动端体验）
   -webkit-user-select: none;
   user-select: none;
+  // 教程 1.4.4：iOS 长按弹出菜单禁用
+  -webkit-touch-callout: none;
+  // 教程 1.4.5：禁用 iOS 橡皮筋 overscroll
+  overscroll-behavior-y: none;
+  background-color: #F4F7FC;
+  color: var(--color-text-primary);
 }
 
 #app {
@@ -117,10 +132,52 @@ body {
   background-color: var(--color-bg);
 }
 
-// 输入框允许选中
-input, textarea {
+// ---------- 表单元素 ----------
+// 教程关键：iOS Safari 中 input font-size < 16px 时 focus 会放大页面
+// 全局 input 默认 16px (0.427rem @ base 37.5px)
+input, textarea, select {
   -webkit-user-select: text;
   user-select: text;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  outline: none;
+}
+
+// checkbox / radio 用 appearance: none 后由业务组件自定义样式
+input[type='checkbox'],
+input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+// 全局禁用 tap 高亮（蓝紫色块），业务可单独覆盖
+a, button, label, .no-tap-highlight {
+  -webkit-tap-highlight-color: transparent;
+}
+
+// ---------- 教程 1.4.3.2：1px 边框（dpr=2/3 设备 retina 适配） ----------
+// 用 transform scale(0.5) 模拟 0.5px，备选 box-shadow inset 0 0 0 0.5px
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .border-top-1px,
+  .border-bottom-1px,
+  .border-left-1px,
+  .border-right-1px {
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      background: var(--color-border);
+      pointer-events: none;
+    }
+  }
+  .border-top-1px::after    { left: 0; right: 0; top: -50%;      height: 1px; transform: scaleY(0.5); transform-origin: 0 0; }
+  .border-bottom-1px::after { left: 0; right: 0; bottom: -50%;   height: 1px; transform: scaleY(0.5); transform-origin: 0 100%; }
+  .border-left-1px::after   { top: 0; bottom: 0; left: -50%;     width: 1px;  transform: scaleX(0.5); transform-origin: 0 0; }
+  .border-right-1px::after  { top: 0; bottom: 0; right: -50%;    width: 1px;  transform: scaleX(0.5); transform-origin: 100% 0; }
 }
 
 // ---------- 通用类 ----------
@@ -161,12 +218,7 @@ input, textarea {
 .risk-high    { color: var(--color-risk-high) !important; }
 
 // ============================================
-// InputPage 样式已迁移至 src/pages/InputPage.vue（scoped）
-// 此处只保留全局通用类
-// ============================================
-
-// ============================================
-// ResultPage 样式（全局定义）
+// ResultPage 通用样式（ResultPage 内已 scoped，部分保留）
 // ============================================
 .result-loading-wrapper,
 .result-empty-wrapper {

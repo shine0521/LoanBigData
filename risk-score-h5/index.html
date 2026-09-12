@@ -3,9 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <!-- 移动端适配 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!--
+      移动端适配（按腾讯云官方教程 https://cloud.tencent.com/developer/article/2020264）
+      1. viewport-fit=cover 让页面延伸到刘海区，安全区由 env() 接管（章节 1.4.5）
+      2. initial-scale=1 让布局视口 = 视觉视口 = 理想视口（章节 1.4）
+      3. maximum-scale=1.0 + user-scalable=no 防误触双指缩放
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="format-detection" content="telephone=no" />
+    <!-- iOS Web App 全屏模式（添加到主屏时） -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- 主题色（Android 浏览器顶部 / iOS 状态栏） -->
+    <meta name="theme-color" content="#4A90E2" />
     <title>风险评分</title>
   </head>
   <body>
