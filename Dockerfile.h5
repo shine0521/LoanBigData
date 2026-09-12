@@ -12,11 +12,15 @@ RUN npm run build
 FROM nginx:1.27-alpine
 # 默认后端地址（CloudBase Run 环境变量可覆盖）
 ENV API_TARGET="https://risk-api-278112-4-1450481727.sh.run.tcloudbase.com"
-# 复制自定义 envsubst 脚本：在 /docker-entrypoint.d/ 下会被官方 entrypoint 自动执行
+# 删除官方 envsubst 脚本，避免它把 $API_TARGET（无花括号）也替换掉导致 nginx -t 失败
+RUN rm -f /docker-entrypoint.d/20-envsubst-on-templates.sh
+# 复制 nginx 配置模板
+COPY risk-score-h5/nginx-default.conf.template /etc/nginx/templates/default.conf.template
+# 复制自定义渲染脚本：在官方 entrypoint 跑完 10/15 后执行（30 序号 > 20）
 COPY docker-entrypoint.d/30-custom-envsubst.sh /docker-entrypoint.d/30-custom-envsubst.sh
 RUN chmod +x /docker-entrypoint.d/30-custom-envsubst.sh
 # 静态资源
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
-# nginx 官方 entrypoint 会先跑 /docker-entrypoint.d/*.sh，再执行 CMD
+# 官方 entrypoint 会先跑 /docker-entrypoint.d/*.sh（10/15 + 我们的 30），再执行 CMD
 CMD ["nginx", "-g", "daemon off;"]
