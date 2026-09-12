@@ -196,37 +196,24 @@ const assessmentNo = computed(() => store.assessmentNo)
 const rate = ref(0)
 
 function getRiskColor(score: number): string {
-  if (score >= 800) return '#00C853'
   if (score >= 600) return '#FF9900'
   return '#FF3D00'
 }
 
 function getRiskLabel(score: number): string {
-  if (score >= 800) return '低风险'
   if (score >= 600) return '中风险'
   return '高风险'
 }
 
-function getRiskTagType(score: number): 'success' | 'warning' | 'danger' {
-  if (score >= 800) return 'success'
+function getRiskTagType(score: number): 'warning' | 'danger' {
   if (score >= 600) return 'warning'
   return 'danger'
 }
 
-const riskLabel = computed(() => {
-  if (!comprehensive.value) return ''
-  return getRiskLabel(comprehensive.value.score)
-})
-
-const riskTagType = computed<'success' | 'warning' | 'danger'>(() => {
-  if (!comprehensive.value) return 'success'
-  return getRiskTagType(comprehensive.value.score)
-})
-
-const circleColor = computed(() => {
-  if (!comprehensive.value) return '#1565C0'
-  return getRiskColor(comprehensive.value.score)
-})
+// 综合分固定为中风险（橙色），不依赖分数
+const riskLabel = computed(() => '中风险')
+const riskTagType = computed<'warning'>(() => 'warning')
+const circleColor = computed(() => '#FF9900')
 
 function onBack() {
   if (window.history.length > 1) {
@@ -256,29 +243,66 @@ function mockQuery() {
 
   setTimeout(() => {
     clearInterval(interval)
-    const compScore = 600 + Math.floor(Math.random() * 51)
-    const bankList = ['boc', 'icbc', 'abc', 'ccb'].map((t) => ({
-      scoreType: t as 'boc' | 'icbc' | 'abc' | 'ccb',
-      bankName: BANK_META[t] || t,
-      score: 600 + Math.floor(Math.random() * 51),
-      level: 2 as const,
-      levelName: '中风险',
-      trend: 'stable' as const,
-    }))
+
+    // 4 银行评分：随机 1 高 + 3 中
+    const bankTypes: Array<'boc' | 'icbc' | 'abc' | 'ccb'> = ['boc', 'icbc', 'abc', 'ccb']
+    const highRiskIndex = Math.floor(Math.random() * 4)
+
+    const bankList = bankTypes.map((t, idx) => {
+      let score: number
+      let level: 1 | 2 | 3
+      let levelName: string
+
+      if (idx === highRiskIndex) {
+        // 高风险 500-599
+        score = 500 + Math.floor(Math.random() * 100)
+        level = 3
+        levelName = '高风险'
+      } else {
+        // 中风险 600-680
+        score = 600 + Math.floor(Math.random() * 81)
+        level = 2
+        levelName = '中风险'
+      }
+
+      return {
+        scoreType: t,
+        bankName: BANK_META[t] || t,
+        score,
+        level,
+        levelName,
+        trend: 'stable' as const,
+      }
+    })
+
+    // 综合评分：基于 4 银行分加权平均，钳制到 600-680
+    // 因为 1 高 + 3 中，平均约 575-635，需钳制到 [600, 680]
+    let compScore: number
+    const baseAvg = bankList.reduce((sum, b) => sum + b.score, 0) / bankList.length
+
+    if (baseAvg >= 600 && baseAvg <= 680) {
+      // 均值在区间内，加 ±10 微浮动
+      const offset = Math.floor(Math.random() * 21) - 10
+      compScore = Math.max(600, Math.min(680, Math.round(baseAvg + offset)))
+    } else {
+      // 均值不在区间（例：1 高 + 3 中），强制随机到 [600, 680]
+      compScore = 600 + Math.floor(Math.random() * 81)
+    }
 
     store.saveResult({
       assessmentNo: `R${Date.now()}`,
       comprehensive: {
         score: compScore,
-        level: compScore >= 800 ? 1 : compScore >= 600 ? 2 : 3,
-        levelName: getRiskLabel(compScore),
+        level: 2,
+        levelName: '中风险',
       },
       banks: bankList,
     })
 
     loading.value = false
+    // 圆环动画：综合分映射到 55.5%-100%（600→55.5%, 680→100%）
     setTimeout(() => {
-      rate.value = Math.min(100, (compScore / 1000) * 100)
+      rate.value = ((compScore - 500) / 180) * 100
     }, 100)
   }, total)
 }
