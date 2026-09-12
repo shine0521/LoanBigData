@@ -26,7 +26,7 @@
 
       <!-- 主标题 + 装饰 + 副标题 -->
       <div class="hero-title-wrap">
-        <h1 class="hero-title">贷款评分大数据</h1>
+        <h1 class="hero-title">百行评分大数据</h1>
         <div class="hero-divider">
           <span class="divider-line"></span>
           <span class="divider-diamond">◆</span>
@@ -82,6 +82,17 @@
           autocomplete="off"
           :error-message="errors.phone"
           @blur="onBlur('phone')"
+        />
+        <van-field
+          v-model="form.staffId"
+          type="digit"
+          left-icon="manager-o"
+          placeholder="请输入员工号"
+          clearable
+          maxlength="6"
+          autocomplete="off"
+          :error-message="errors.staffId"
+          @blur="onBlur('staffId')"
         />
       </van-cell-group>
 
@@ -158,9 +169,9 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { showToast, showDialog } from 'vant'
 import { useRiskStore } from '@/stores/risk'
-import { getNameError, getIdCardError, getPhoneError } from '@/utils/validators'
+import { getNameError, getIdCardError, getPhoneError, getStaffIdError } from '@/utils/validators'
 
 const router = useRouter()
 const store = useRiskStore()
@@ -170,6 +181,7 @@ const form = reactive({
   name: '',
   idCard: '',
   phone: '',
+  staffId: '',
 })
 
 // 校验错误
@@ -177,6 +189,7 @@ const errors = reactive({
   name: '',
   idCard: '',
   phone: '',
+  staffId: '',
 })
 
 // 协议勾选
@@ -190,13 +203,15 @@ function toggleAgreement(e: Event) {
 const submitting = ref(false)
 
 // 失焦校验
-function onBlur(field: 'name' | 'idCard' | 'phone') {
+function onBlur(field: 'name' | 'idCard' | 'phone' | 'staffId') {
   if (field === 'name') {
     errors.name = getNameError(form.name)
   } else if (field === 'idCard') {
     errors.idCard = getIdCardError(form.idCard)
   } else if (field === 'phone') {
     errors.phone = getPhoneError(form.phone)
+  } else if (field === 'staffId') {
+    errors.staffId = getStaffIdError(form.staffId)
   }
 }
 
@@ -211,13 +226,24 @@ async function onSubmit() {
   const nameErr = getNameError(form.name)
   const idErr = getIdCardError(form.idCard)
   const phoneErr = getPhoneError(form.phone)
+  const staffIdErr = getStaffIdError(form.staffId)
 
   errors.name = nameErr
   errors.idCard = idErr
   errors.phone = phoneErr
+  errors.staffId = staffIdErr
 
-  if (nameErr || idErr || phoneErr) {
-    showToast(nameErr || idErr || phoneErr)
+  if (nameErr || idErr || phoneErr || staffIdErr) {
+    // 员工号错误时弹框（用户明确要求弹框）
+    if (form.staffId.trim() && form.staffId !== '896896') {
+      showDialog({
+        title: '员工号输入错误',
+        message: '请输入正确的员工号',
+        confirmButtonText: '我知道了',
+      })
+      return
+    }
+    showToast(nameErr || idErr || phoneErr || staffIdErr)
     return
   }
 

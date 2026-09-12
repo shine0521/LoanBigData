@@ -79,3 +79,17 @@ export function getPhoneError(value: string): string {
   if (!validatePhone(value)) return '手机号格式不正确'
   return ''
 }
+
+/**
+ * 校验员工号
+ * 规则：必须等于 '896896'
+ */
+export function validateStaffId(value: string): boolean {
+  return value === '896896'
+}
+
+export function getStaffIdError(value: string): string {
+  if (!value.trim()) return '请输入员工号'
+  if (!validateStaffId(value)) return '员工号输入错误'
+  return ''
+}
