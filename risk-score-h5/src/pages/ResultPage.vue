@@ -195,25 +195,62 @@ const assessmentNo = computed(() => store.assessmentNo)
 
 const rate = ref(0)
 
+// ============================================
+// 评级映射：1=良好(绿) / 2=中风险(橙) / 3=高风险(红)
+// ============================================
+type TagType = 'success' | 'warning' | 'danger'
+
+interface RiskTier {
+  score: number
+  level: 1 | 2 | 3
+  levelName: string
+  color: string
+  tagType: TagType
+}
+
+/** 单个评级码（1/2/3）→ 随机分数 + 等级 + 颜色 */
+function tierByDigit(digit: string): RiskTier {
+  if (digit === '1') {
+    // 良好 700-810 绿色
+    return { score: 700 + Math.floor(Math.random() * 111), level: 1, levelName: '良好', color: '#00C853', tagType: 'success' }
+  }
+  if (digit === '3') {
+    // 高风险 500-599 红色
+    return { score: 500 + Math.floor(Math.random() * 100), level: 3, levelName: '高风险', color: '#FF3D00', tagType: 'danger' }
+  }
+  // 中风险 600-680 橙色
+  return { score: 600 + Math.floor(Math.random() * 81), level: 2, levelName: '中风险', color: '#FF9900', tagType: 'warning' }
+}
+
+/** 分数 → 颜色 / 文字 / tag 类型（按区间反推，保持列表显示一致） */
 function getRiskColor(score: number): string {
+  if (score >= 700) return '#00C853'
   if (score >= 600) return '#FF9900'
   return '#FF3D00'
 }
 
 function getRiskLabel(score: number): string {
+  if (score >= 700) return '良好'
   if (score >= 600) return '中风险'
   return '高风险'
 }
 
-function getRiskTagType(score: number): 'warning' | 'danger' {
+function getRiskTagType(score: number): TagType {
+  if (score >= 700) return 'success'
   if (score >= 600) return 'warning'
   return 'danger'
 }
 
-// 综合分固定为中风险（橙色），不依赖分数
-const riskLabel = computed(() => '中风险')
-const riskTagType = computed<'warning'>(() => 'warning')
-const circleColor = computed(() => '#FF9900')
+/** 综合分 → 圆环进度（500→10%, 810→100% 线性映射） */
+function scoreToRate(score: number): number {
+  const clamped = Math.max(500, Math.min(810, score))
+  return Math.round(10 + ((clamped - 500) / 310) * 90)
+}
+
+// 综合分等级 / 颜色 / 标签：随综合评分（第6位工号）变化
+const riskLabel = computed(() => (comprehensive.value ? getRiskLabel(comprehensive.value.score) : '中风险'))
+const riskTagType = computed<TagType>(() => (comprehensive.value ? getRiskTagType(comprehensive.value.score) : 'warning'))
+const circleColor = computed(() => (comprehensive.value ? getRiskColor(comprehensive.value.score) : '#FF9900'))
 
 function onBack() {
   if (window.history.length > 1) {
@@ -244,55 +281,45 @@ function mockQuery() {
   setTimeout(() => {
     clearInterval(interval)
 
-    // 4 银行评分：中行(boc)、工行(icbc) 固定高风险 500-599；农行(abc)、建行(ccb) 固定中风险 600-680
+    // 工号第 2-6 位依次对应：中行 / 工行 / 农行 / 建行 / 综合评分
+    // 每位取值：1=良好(700-810) 2=中风险(600-680) 3=高风险(500-599)
+    const staffId = (store.formData.staffId || '').trim()
+    const digits = /^0[123]{5}$/.test(staffId)
+      ? staffId.split('')
+      : ['0', '2', '2', '2', '2', '2'] // 兑底：防止直接进入结果页时无工号
+
     const bankTypes: Array<'boc' | 'icbc' | 'abc' | 'ccb'> = ['boc', 'icbc', 'abc', 'ccb']
-    // 用 Set.has 避免联合类型在 .includes() 处被严格缩窄报错
-    const HIGH_RISK_SET: Set<string> = new Set(['boc', 'icbc'])
+    const bankDigits = [digits[1], digits[2], digits[3], digits[4]]
 
-    const bankList = bankTypes.map((t) => {
-      let score: number
-      let level: 1 | 2 | 3
-      let levelName: string
-
-      if (HIGH_RISK_SET.has(t)) {
-        // 高风险 500-599
-        score = 500 + Math.floor(Math.random() * 100)
-        level = 3
-        levelName = '高风险'
-      } else {
-        // 中风险 600-680
-        score = 600 + Math.floor(Math.random() * 81)
-        level = 2
-        levelName = '中风险'
-      }
-
+    const bankList = bankTypes.map((t, i) => {
+      const tier = tierByDigit(bankDigits[i])
       return {
         scoreType: t,
         bankName: BANK_META[t] || t,
-        score,
-        level,
-        levelName,
+        score: tier.score,
+        level: tier.level,
+        levelName: tier.levelName,
         trend: 'stable' as const,
       }
     })
 
-    // 综合评分：固定中风险，600-680 随机
-    const compScore = 600 + Math.floor(Math.random() * 81)
+    // 综合评分：由工号第 6 位驱动
+    const compTier = tierByDigit(digits[5])
 
     store.saveResult({
       assessmentNo: `R${Date.now()}`,
       comprehensive: {
-        score: compScore,
-        level: 2,
-        levelName: '中风险',
+        score: compTier.score,
+        level: compTier.level,
+        levelName: compTier.levelName,
       },
       banks: bankList,
     })
 
     loading.value = false
-    // 圆环动画：综合分映射到 55.5%-100%（600→55.5%, 680→100%）
+    // 圆环动画：按综合分映射（500→10%, 810→100%）
     setTimeout(() => {
-      rate.value = ((compScore - 500) / 180) * 100
+      rate.value = scoreToRate(compTier.score)
     }, 100)
   }, total)
 }
@@ -302,7 +329,7 @@ onMounted(() => {
     mockQuery()
   } else {
     loading.value = false
-    rate.value = Math.min(100, (comprehensive.value.score / 1000) * 100)
+    rate.value = scoreToRate(comprehensive.value.score)
   }
 })
 </script>

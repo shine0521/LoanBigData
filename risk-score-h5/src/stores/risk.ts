@@ -12,6 +12,7 @@ export const useRiskStore = defineStore('risk', () => {
     name: '',
     idCard: '',
     phone: '',
+    staffId: '',
   })
 
   // 隐私协议是否勾选
@@ -70,7 +71,7 @@ export const useRiskStore = defineStore('risk', () => {
    * 清空所有状态（重新查询时）
    */
   function reset() {
-    formData.value = { name: '', idCard: '', phone: '' }
+    formData.value = { name: '', idCard: '', phone: '', staffId: '' }
     privacyAgreed.value = false
     submitting.value = false
     resultData.value = null

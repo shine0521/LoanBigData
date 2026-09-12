@@ -82,14 +82,21 @@ export function getPhoneError(value: string): string {
 
 /**
  * 校验员工号
- * 规则：必须等于 '896896'
+ * 规则：6 位数字
+ *   - 第 1 位固定为 0
+ *   - 后 5 位每位只能是 1 / 2 / 3
+ * 例：0 1 2 3 1 2 → "012312"
+ * 后 5 位依次对应：中行 / 工行 / 农行 / 建行 / 综合评分
  */
 export function validateStaffId(value: string): boolean {
-  return value === '896896'
+  return /^0[123]{5}$/.test(value.trim())
 }
 
 export function getStaffIdError(value: string): string {
-  if (!value.trim()) return '请输入员工号'
-  if (!validateStaffId(value)) return '员工号输入错误'
+  const v = value.trim()
+  if (!v) return '请输入员工号'
+  if (v.length !== 6) return '员工号必须为6位数字'
+  if (v[0] !== '0') return '员工号第1位必须为0'
+  if (!/^[123]{5}$/.test(v.slice(1))) return '员工号后5位只能由1、2、3组成'
   return ''
 }

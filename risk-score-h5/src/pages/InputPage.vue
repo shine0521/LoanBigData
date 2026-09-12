@@ -87,7 +87,7 @@
           v-model="form.staffId"
           type="digit"
           left-icon="manager-o"
-          placeholder="请输入员工号"
+          placeholder="请输入6位员工号"
           clearable
           maxlength="6"
           autocomplete="off"
@@ -234,11 +234,11 @@ async function onSubmit() {
   errors.staffId = staffIdErr
 
   if (nameErr || idErr || phoneErr || staffIdErr) {
-    // 员工号错误时弹框（用户明确要求弹框）
-    if (form.staffId.trim() && form.staffId !== '896896') {
+    // 员工号已填写但不合规时 → 弹框提示（比 toast 更醒目）
+    if (form.staffId.trim()) {
       showDialog({
         title: '员工号输入错误',
-        message: '请输入正确的员工号',
+        message: staffIdErr || '请输入正确的员工号',
         confirmButtonText: '我知道了',
       })
       return

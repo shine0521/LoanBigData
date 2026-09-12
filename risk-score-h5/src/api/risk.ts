@@ -11,6 +11,8 @@ export interface SubmitParams {
   name: string
   idCard: string
   phone: string
+  /** 6 位员工号（0 + 5 位评级码），前端 mock 评分驱动用 */
+  staffId?: string
 }
 
 /** 提交响应（返回评估单号 + 脱敏信息 + 综合分概览） */
