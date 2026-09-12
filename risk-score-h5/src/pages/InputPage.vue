@@ -221,24 +221,26 @@ function onSubmit() {
 
 <style lang="scss" scoped>
 // ============================================
-// 页面整体
+// 页面整体（浅灰背景 + Hero 深蓝）
 // ============================================
 .page {
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(180deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
+  background: #F4F7FB;
   padding-bottom: 0.8rem;
   padding-top: env(safe-area-inset-top, 0);
 }
 
 // ============================================
-// Hero 区域（蓝紫渐变 + 标题）
+// Hero 区域（纯深蓝、严谨）
 // ============================================
 .hero {
   padding: 0.96rem 0.8rem 1.2rem;
   text-align: center;
-  color: #fff;
+  color: #FFFFFF;
+  background: #1565C0;
+  border-bottom: 0.08rem solid #0D47A1;
 }
 
 .hero-badge {
@@ -246,32 +248,28 @@ function onSubmit() {
   align-items: center;
   gap: 0.16rem;
   padding: 0.16rem 0.48rem;
-  background: rgba(255, 255, 255, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0.08rem;
   font-size: 0.32rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-title {
   margin: 0.64rem 0 0.16rem;
   font-size: clamp(1.2rem, 8.5vw, 1.6rem);
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1.15;
-  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.28);
 }
 
 .hero-subtitle {
   margin: 0;
-  font-size: clamp(0.9rem, 6vw, 1.1rem);
-  font-weight: 800;
+  font-size: clamp(0.7rem, 5vw, 0.86rem);
+  font-weight: 600;
   letter-spacing: 0.32em;
-  opacity: 0.95;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+  opacity: 0.85;
 }
 
 // ============================================
@@ -347,9 +345,9 @@ function onSubmit() {
 :deep(.tip-orange.van-notice-bar) {
   margin: 0.32rem 0.32rem;
   padding: 0.32rem;
-  border-radius: 0.16rem;
+  border-radius: 0.08rem;
   border: 1px solid #FFD9A6;
-  background: linear-gradient(135deg, #FFF4E6 0%, #FFE6CC 100%) !important;
+  background: #FFF4E6 !important;
 }
 
 .tip-orange-content {
@@ -380,36 +378,37 @@ function onSubmit() {
 
 .agreement-text {
   font-size: 0.32rem;
-  color: #1a1a1a;
+  color: #1F2937;
   line-height: 1.7;
 }
 
 .agreement-link {
-  color: #4A90E2;
+  color: #1565C0;
   text-decoration: none;
   font-weight: 600;
 }
 
-// 提交按钮
+// 提交按钮（纯银行蓝）
 .submit-btn {
   margin: 0.48rem 0.4rem 0.32rem;
   height: 1.6rem;
   font-size: 0.48rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.32em;
-  background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 50%, #A55EEA 100%);
+  background: #1565C0 !important;
   border: 0;
 }
 
-// 底部信任标识
+// 底部信任标识（深色背景下白色文字）
 .footer-trust {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.16rem;
   margin-top: 0.64rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: #6B7280;
   font-size: 0.28rem;
   letter-spacing: 0.04em;
+  background: transparent;
 }
 </style>

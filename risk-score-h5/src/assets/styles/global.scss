@@ -39,34 +39,36 @@ textarea {
 }
 
 // ============================================
-// Vant 4 主题变量覆盖
+// Vant 4 主题变量覆盖（银行深蓝、科技严谨）
 // ============================================
 :root {
-  // 主色：蓝紫渐变起色
-  --van-primary-color: #4A90E2;
+  // 主色：银行深蓝 #1565C0
+  --van-primary-color: #1565C0;
+  --van-button-primary-background: #1565C0;
+  --van-button-primary-border-color: #1565C0;
 
-  // 危险 / 警告 / 成功
+  // 危险 / 警告 / 成功（风险语义保留）
   --van-danger-color: #FF3D00;
   --van-warning-color: #FF9900;
   --van-success-color: #00C853;
 
   // 文字
-  --van-text-color: #1a1a1a;
-  --van-text-color-2: #646566;
+  --van-text-color: #1F2937;
+  --van-text-color-2: #6B7280;
 
   // 背景
-  --van-background: #f5f7fa;
-  --van-background-2: #fff;
+  --van-background: #F4F7FB;
+  --van-background-2: #FFFFFF;
 
   // 边框
-  --van-border-color: #ebedf0;
+  --van-border-color: #E5E7EB;
 
-  // 圆角（移动端更适合）
-  --van-radius-md: 0.213rem;   // 8px
-  --van-radius-lg: 0.32rem;    // 12px
+  // 圆角（严谨风：适中圆角）
+  --van-radius-md: 0.16rem;    // 6px
+  --van-radius-lg: 0.24rem;    // 9px
 
   // 按钮高度
-  --van-button-default-height: 1.28rem;  // 48px
+  --van-button-default-height: 1.28rem;
   --van-button-primary-height: 1.28rem;
 
   // Cell
@@ -75,12 +77,15 @@ textarea {
   --van-cell-font-size: 0.4rem;
 
   // Field
-  --van-field-input-text-color: #1a1a1a;
-  --van-field-placeholder-text-color: #b0b8c2;
+  --van-field-input-text-color: #1F2937;
+  --van-field-placeholder-text-color: #9CA3AF;
 
   // NavBar
   --van-nav-bar-height: 1.2rem;
-  --van-nav-bar-background: #fff;
+  --van-nav-bar-background: #FFFFFF;
+  --van-nav-bar-title-text-color: #1F2937;
+  --van-nav-bar-icon-color: #1565C0;
+  --van-nav-bar-text-color: #1565C0;
 
   // Safe area（iOS 刘海屏）
   padding-top: env(safe-area-inset-top, 0);
