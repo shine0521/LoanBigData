@@ -98,8 +98,7 @@
           <span class="title-icon">
             <van-icon name="gold-coin-o" color="#D4AF37" />
           </span>
-          <span class="title-text">四行评分详情</span>
-          <span class="title-tag">FOUR BANKS</span>
+          <span class="title-text">四大行评分</span>
         </div>
 
         <van-cell-group inset>
@@ -116,7 +115,7 @@
               <div class="bank-name">{{ bank.bankName }}</div>
             </template>
             <template #label>
-              <div class="bank-sub">{{ bank.bankName }} · 银行评分</div>
+              <div class="bank-sub">个人信用 · 专业评估</div>
             </template>
             <template #value>
               <div class="bank-score-wrap">
@@ -180,10 +179,10 @@ import BankIcon from '@/components/BankIcon.vue'
 
 // 银行名映射（前端本地）
 const BANK_META: Record<string, string> = {
-  boc: '中国银行',
-  icbc: '工商银行',
-  abc: '农业银行',
-  ccb: '建设银行',
+  boc: '中行评分',
+  icbc: '工行评分',
+  abc: '农行评分',
+  ccb: '建行评分',
 }
 
 const router = useRouter()
@@ -539,14 +538,6 @@ onMounted(() => {
   font-weight: 700;
   color: #1F2937;
   letter-spacing: 0.04em;
-}
-
-.title-tag {
-  margin-left: auto;
-  font-size: 0.22rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: #9CA3AF;
 }
 
 :deep(.banks-card .van-cell-group--inset) {

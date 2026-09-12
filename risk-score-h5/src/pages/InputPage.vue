@@ -26,7 +26,7 @@
 
       <!-- 主标题 + 装饰 + 副标题 -->
       <div class="hero-title-wrap">
-        <h1 class="hero-title">银行评分大数据</h1>
+        <h1 class="hero-title">贷款评分大数据</h1>
         <div class="hero-divider">
           <span class="divider-line"></span>
           <span class="divider-diamond">◆</span>
