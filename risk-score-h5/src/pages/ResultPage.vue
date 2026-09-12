@@ -93,7 +93,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRiskStore } from '@/stores/risk'
-import { queryScore, getAssessment } from '@/api/risk'
+import { getAssessment } from '@/api/risk'
+import type { QueryScoreResponse } from '@/api/risk'
 
 const router = useRouter()
 const store = useRiskStore()
@@ -168,11 +169,14 @@ function getLevelText(score: number): string {
 
 // ---------- 加载逻辑 ----------
 onMounted(async () => {
+  // 已加载则直接显示
   if (store.resultData) return
 
   const no = store.assessmentNo
+  const hasFormData = !!store.formData.name
 
-  if (!no && !store.formData.name) {
+  // 没有评估单号 + 没有表单数据 → 回首页
+  if (!no && !hasFormData) {
     router.replace({ name: 'index' })
     return
   }
@@ -180,21 +184,34 @@ onMounted(async () => {
   loading.value = true
   startTimers()
 
-  const waitMs = 5000 + Math.floor(Math.random() * 5001)
+  const waitMs = 5000 + Math.floor(Math.random() * 5001) // 5-10 秒随机加载
 
   try {
     await new Promise<void>((resolve) => setTimeout(resolve, waitMs))
 
-    let result
-    if (no) {
-      result = await getAssessment(no)
-    } else {
-      result = await queryScore({
-        name: store.formData.name,
-        idCard: store.formData.idCard,
-        phone: store.formData.phone,
-      })
+    // ========== 纯前端分支：没有评估单号 → 生成 mock 随机评分（600-650）==========
+    if (!no) {
+      const rand = () => 600 + Math.floor(Math.random() * 51) // 600-650 随机
+      const mockResult: QueryScoreResponse = {
+        comprehensive: {
+          score: rand(),
+          level: 2,
+          levelName: '中风险',
+        },
+        banks: [
+          { scoreType: 'boc',  score: rand(), level: 2, levelName: '中风险', trend: 'stable' },
+          { scoreType: 'icbc', score: rand(), level: 2, levelName: '中风险', trend: 'stable' },
+          { scoreType: 'abc',  score: rand(), level: 2, levelName: '中风险', trend: 'stable' },
+          { scoreType: 'ccb',  score: rand(), level: 2, levelName: '中风险', trend: 'stable' },
+        ],
+        assessmentNo: 'MOCK' + Date.now(),
+      }
+      store.saveResult(mockResult)
+      return
     }
+
+    // ========== 正常分支：有评估单号 → 调后端 API ==========
+    const result = await getAssessment(no)
     store.saveResult(result)
   } catch (err: unknown) {
     errorMsg.value = err instanceof Error ? err.message : '查询评分失败'

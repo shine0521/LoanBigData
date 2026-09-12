@@ -102,15 +102,14 @@
         </span>
       </div>
 
-      <!-- 立即查询按钮 -->
+      <!-- 立即查询按钮（纯前端：校验通过直接跳转，零回传后端） -->
       <button
         class="pay-btn"
-        :class="{ disabled: !canSubmit, loading: store.submitting }"
-        :disabled="!canSubmit || store.submitting"
+        :class="{ disabled: !canSubmit }"
+        :disabled="!canSubmit"
         @click="handleSubmit"
       >
-        <span v-if="store.submitting">提交中...</span>
-        <span v-else>立即查询</span>
+        立即查询
       </button>
     </div>
 
@@ -140,7 +139,6 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRiskStore } from '@/stores/risk'
-import { submit } from '@/api/risk'
 import {
   validateName,
   validateIdCard,
@@ -196,18 +194,17 @@ function openAgreement(type: 'user' | 'privacy' | 'auth') {
   popupType.value = type
 }
 
-// ---------- 提交 ----------
+// ---------- 提交（纯前端模拟：校验通过直接跳转，不调后端 API） ----------
 const canSubmit = computed(() => {
   return (
     validateName(form.name) &&
     validateIdCard(form.idCard) &&
     validatePhone(form.phone) &&
-    agreed.value &&
-    !store.submitting
+    agreed.value
   )
 })
 
-async function handleSubmit() {
+function handleSubmit() {
   // 完整校验
   validateField('name')
   validateField('idCard')
@@ -217,23 +214,11 @@ async function handleSubmit() {
   if (!validatePhone(form.phone)) return showToast('请检查手机号')
   if (!agreed.value) return showToast('请先阅读并同意协议')
 
+  // 保存表单数据（供 ResultPage 显示）
   store.saveFormData({ name: form.name, idCard: form.idCard, phone: form.phone })
-  store.setSubmitting(true)
 
-  try {
-    const result = await submit({
-      name: form.name,
-      idCard: form.idCard,
-      phone: form.phone,
-    })
-    store.saveAssessmentNo(result.assessmentNo)
-    router.push({ name: 'result' })
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : '提交失败，请稍后重试'
-    showToast(msg)
-  } finally {
-    store.setSubmitting(false)
-  }
+  // 立即跳转结果页，零后端回传
+  router.push({ name: 'result' })
 }
 
 // ---------- Toast ----------
