@@ -9,15 +9,11 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # 后端 API 反代（API_TARGET 由 CloudBase Run 环境变量注入）
-    # 使用 set + map 双重保护，即使 API_TARGET 为空也不会 nginx -t 失败或崩掉
+    # 后端 API 反代（${API_TARGET} 由 entrypoint 脚本注入）
+    # 用 set 变量方式，即使 ${API_TARGET} 为空也不会崩（默认指向公网后端）
     location /api/ {
-        resolver 8.8.8.8 valid=5s ipv6=off;
-        set $upstream_backend "https://risk-api-278112-4-1450481727.sh.run.tcloudbase.com";
-        if ($API_TARGET != "") {
-            set $upstream_backend "${API_TARGET}";
-        }
-        proxy_pass $upstream_backend/api/;
+        set $upstream "${API_TARGET}";
+        proxy_pass $upstream/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

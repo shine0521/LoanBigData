@@ -10,9 +10,13 @@ RUN npm run build
 # 构建产物在 /app/dist
 
 FROM nginx:1.27-alpine
-# nginx 官方镜像启动时会自动把 /etc/nginx/templates/*.template 用环境变量渲染到 /etc/nginx/conf.d/
-# 这里用 ${API_TARGET} 注入后端地址（CloudBase Run 控制台环境变量配置）
-COPY risk-score-h5/nginx-default.conf.template /etc/nginx/templates/default.conf.template
+# 默认后端地址（CloudBase Run 环境变量可覆盖）
+ENV API_TARGET="https://risk-api-278112-4-1450481727.sh.run.tcloudbase.com"
+# 复制自定义 envsubst 脚本：在 /docker-entrypoint.d/ 下会被官方 entrypoint 自动执行
+COPY docker-entrypoint.d/30-custom-envsubst.sh /docker-entrypoint.d/30-custom-envsubst.sh
+RUN chmod +x /docker-entrypoint.d/30-custom-envsubst.sh
+# 静态资源
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
+# nginx 官方 entrypoint 会先跑 /docker-entrypoint.d/*.sh，再执行 CMD
 CMD ["nginx", "-g", "daemon off;"]
