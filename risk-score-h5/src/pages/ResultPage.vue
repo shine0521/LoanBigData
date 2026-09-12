@@ -293,6 +293,11 @@ onMounted(() => {
   padding-bottom: 0.8rem;
 }
 
+// 强制 navbar 最上层（避免滚动时圆环 stroke 盖住顶部栏）
+:deep(.van-nav-bar) {
+  z-index: 1000 !important;
+}
+
 // 加载态
 .loading-wrap {
   display: flex;
@@ -321,6 +326,7 @@ onMounted(() => {
 // ============================================
 .score-hero {
   position: relative;
+  z-index: 1;
   padding: 1.12rem 0.8rem 1.28rem;
   background: linear-gradient(180deg, #0D2E5C 0%, #1565C0 100%);
   color: #fff;
