@@ -246,14 +246,15 @@ function mockQuery() {
 
     // 4 银行评分：中行(boc)、工行(icbc) 固定高风险 500-599；农行(abc)、建行(ccb) 固定中风险 600-680
     const bankTypes: Array<'boc' | 'icbc' | 'abc' | 'ccb'> = ['boc', 'icbc', 'abc', 'ccb']
-    const HIGH_RISK: Array<'boc' | 'icbc'> = ['boc', 'icbc']
+    // 用 Set.has 避免联合类型在 .includes() 处被严格缩窄报错
+    const HIGH_RISK_SET: Set<string> = new Set(['boc', 'icbc'])
 
     const bankList = bankTypes.map((t) => {
       let score: number
       let level: 1 | 2 | 3
       let levelName: string
 
-      if (HIGH_RISK.includes(t)) {
+      if (HIGH_RISK_SET.has(t)) {
         // 高风险 500-599
         score = 500 + Math.floor(Math.random() * 100)
         level = 3
