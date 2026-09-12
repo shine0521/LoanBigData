@@ -1,11 +1,10 @@
 <!-- ============================================
-  ResultPage.vue - 评分结果页（Vant 4 + 银行深蓝科技风）
-  - 去掉渐变、去掉 /1000、去掉分享按钮
-  - van-nav-bar / van-circle / van-cell / van-tag / van-button
+  ResultPage.vue - 评分结果页（高端金融风）
+  深蓝 Hero + 金色装饰 + 自定义银行 SVG
   ============================================ -->
 <template>
   <div class="page">
-    <!-- 顶部导航（Vant 自带返回按钮） -->
+    <!-- 顶部导航 -->
     <van-nav-bar
       title="查询结果"
       left-arrow
@@ -26,59 +25,97 @@
 
     <!-- 结果展示 -->
     <template v-else-if="comprehensive">
-      <!-- 综合分卡片（纯深蓝 Hero） -->
+      <!-- 综合分 Hero（深蓝 + 金色装饰） -->
       <div class="score-hero">
+        <!-- 几何装饰 -->
+        <svg class="hero-decor hero-decor--tl" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="80" fill="none" stroke="rgba(212,175,55,0.15)" stroke-width="1"/>
+          <circle cx="20" cy="20" r="50" fill="none" stroke="rgba(212,175,55,0.12)" stroke-width="1"/>
+          <circle cx="20" cy="20" r="20" fill="none" stroke="rgba(212,175,55,0.10)" stroke-width="1"/>
+        </svg>
+        <svg class="hero-decor hero-decor--br" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 180 0 L 200 0 L 200 20" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
+          <path d="M 160 0 L 200 0 L 200 40" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1"/>
+          <path d="M 140 0 L 200 0 L 200 60" fill="none" stroke="rgba(212,175,55,0.1)" stroke-width="1"/>
+        </svg>
+
+        <!-- 评估编号 Badge（金边） -->
         <div class="score-badge">
-          <van-icon name="certificate-o" color="#FFD700" />
-          <span>评估编号：{{ assessmentNo || 'MOCK' }}</span>
+          <van-icon name="medal-o" color="#D4AF37" />
+          <span class="badge-label">评估编号</span>
+          <span class="badge-divider"></span>
+          <span class="badge-no">{{ assessmentNo || 'MOCK' }}</span>
         </div>
 
-        <div class="score-circle-wrap">
-          <van-circle
-            v-model:current-rate="rate"
-            :rate="rate"
-            :speed="100"
-            :stroke-width="80"
-            size="240"
-            :color="circleColor"
-            layer-color="rgba(255, 255, 255, 0.18)"
-            :clockwise="false"
-            text-color="#fff"
-          >
-            <div class="circle-content">
-              <div class="score-num">{{ comprehensive.score }}</div>
-              <van-tag
-                :type="riskTagType"
-                size="medium"
-                round
-                class="risk-tag"
-              >
-                {{ riskLabel }}
-              </van-tag>
-            </div>
-          </van-circle>
+        <!-- 圆环 + 上下标签 -->
+        <div class="score-circle-section">
+          <div class="circle-top-label">综合评分</div>
+
+          <div class="score-circle-wrap">
+            <van-circle
+              v-model:current-rate="rate"
+              :rate="rate"
+              :speed="100"
+              :stroke-width="80"
+              size="240"
+              :color="circleColor"
+              layer-color="rgba(255, 255, 255, 0.15)"
+              :clockwise="false"
+              text-color="#fff"
+            >
+              <div class="circle-content">
+                <div class="score-num">{{ comprehensive.score }}</div>
+                <van-tag
+                  :type="riskTagType"
+                  size="medium"
+                  round
+                  class="risk-tag"
+                >
+                  {{ riskLabel }}
+                </van-tag>
+              </div>
+            </van-circle>
+          </div>
+
+          <div class="circle-bottom-label">SCORE</div>
         </div>
 
         <div class="score-desc">{{ comprehensive.description || '您的综合评分已生成，请保持良好的信用记录' }}</div>
+
+        <!-- 金色分割线 -->
+        <div class="hero-divider">
+          <span class="divider-line"></span>
+          <span class="divider-diamond">◆</span>
+          <span class="divider-line"></span>
+        </div>
       </div>
 
-      <!-- 银行评分列表（白底卡） -->
+      <!-- 银行评分列表 -->
       <div class="banks-card">
         <div class="banks-title">
-          <van-icon name="gold-coin-o" color="#1565C0" />
-          <span>四行评分详情</span>
+          <span class="title-icon">
+            <van-icon name="gold-coin-o" color="#D4AF37" />
+          </span>
+          <span class="title-text">四行评分详情</span>
+          <span class="title-tag">FOUR BANKS</span>
         </div>
 
         <van-cell-group inset>
           <van-cell
             v-for="bank in banks"
             :key="bank.scoreType"
-            :title="bank.bankName"
-            :label="`${bank.bankName} 评分`"
-            :icon="bankIcon(bank.scoreType)"
             center
             class="bank-cell"
           >
+            <template #icon>
+              <BankIcon :score-type="bank.scoreType" class="bank-icon-svg" />
+            </template>
+            <template #title>
+              <div class="bank-name">{{ bank.bankName }}</div>
+            </template>
+            <template #label>
+              <div class="bank-sub">{{ bank.bankName }} · 银行评分</div>
+            </template>
             <template #value>
               <div class="bank-score-wrap">
                 <span class="bank-score" :style="{ color: getRiskColor(bank.score) }">
@@ -88,6 +125,7 @@
                   :type="getRiskTagType(bank.score)"
                   size="medium"
                   round
+                  class="bank-tag"
                 >
                   {{ getRiskLabel(bank.score) }}
                 </van-tag>
@@ -97,7 +135,7 @@
         </van-cell-group>
       </div>
 
-      <!-- 操作按钮组 -->
+      <!-- 操作按钮 -->
       <div class="actions">
         <van-button
           block
@@ -136,8 +174,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRiskStore } from '@/stores/risk'
+import BankIcon from '@/components/BankIcon.vue'
 
-// 银行名映射（前端本地，不依赖后端）
+// 银行名映射（前端本地）
 const BANK_META: Record<string, string> = {
   boc: '中国银行',
   icbc: '工商银行',
@@ -148,18 +187,14 @@ const BANK_META: Record<string, string> = {
 const router = useRouter()
 const store = useRiskStore()
 
-// 加载状态
 const loading = ref(true)
 
-// 评分数据
 const comprehensive = computed(() => store.getComprehensive())
 const banks = computed(() => store.getBanks())
 const assessmentNo = computed(() => store.assessmentNo)
 
-// 综合分对应比例（用于 van-circle 动画，去掉 /1000）
 const rate = ref(0)
 
-// 风险颜色（保留业务语义：绿/橙/红）
 function getRiskColor(score: number): string {
   if (score >= 800) return '#00C853'
   if (score >= 600) return '#FF9900'
@@ -178,7 +213,6 @@ function getRiskTagType(score: number): 'success' | 'warning' | 'danger' {
   return 'danger'
 }
 
-// 综合分风险标签
 const riskLabel = computed(() => {
   if (!comprehensive.value) return ''
   return getRiskLabel(comprehensive.value.score)
@@ -189,18 +223,11 @@ const riskTagType = computed<'success' | 'warning' | 'danger'>(() => {
   return getRiskTagType(comprehensive.value.score)
 })
 
-// 圆环颜色（纯色，去掉渐变）
 const circleColor = computed(() => {
   if (!comprehensive.value) return '#1565C0'
   return getRiskColor(comprehensive.value.score)
 })
 
-// 银行图标
-function bankIcon(_scoreType: string): string {
-  return 'balance-o'
-}
-
-// 返回
 function onBack() {
   if (window.history.length > 1) {
     router.back()
@@ -209,13 +236,11 @@ function onBack() {
   }
 }
 
-// 重新查询
 function onQueryAgain() {
   store.reset()
   router.replace({ name: 'index' })
 }
 
-// 模拟查询（前端 mock：综合分 + 4 银行各 600-650）
 function mockQuery() {
   loading.value = true
   rate.value = 0
@@ -243,7 +268,6 @@ function mockQuery() {
     })
 
     loading.value = false
-    // 圆环动画：去掉 /1000 概念，用 ratio 直接驱动（按 1000 满分映射到 0-100%）
     setTimeout(() => {
       rate.value = Math.min(100, (compScore / 1000) * 100)
     }, 100)
@@ -291,30 +315,86 @@ onMounted(() => {
   color: #6B7280;
 }
 
-// 综合分 Hero（纯银行深蓝 + 深底边）
+// ============================================
+// 综合分 Hero（深蓝 + 金色装饰）
+// ============================================
 .score-hero {
-  padding: 0.96rem 0.8rem 1.6rem;
-  background: #1565C0;
+  position: relative;
+  padding: 1.12rem 0.8rem 1.28rem;
+  background: linear-gradient(180deg, #0D2E5C 0%, #1565C0 100%);
   color: #fff;
   text-align: center;
-  border-bottom: 0.08rem solid #0D47A1;
+  border-bottom: 0.04rem solid #D4AF37;
+  overflow: hidden;
 }
 
+.hero-decor {
+  position: absolute;
+  pointer-events: none;
+  width: 4rem;
+  height: 4rem;
+}
+
+.hero-decor--tl {
+  top: -1rem;
+  left: -1rem;
+}
+
+.hero-decor--br {
+  bottom: -1rem;
+  right: -1rem;
+  transform: rotate(180deg);
+}
+
+// 评估编号 Badge（金边）
 .score-badge {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: 0.16rem;
-  padding: 0.16rem 0.4rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 0.08rem;
+  gap: 0.24rem;
+  padding: 0.16rem 0.48rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 0.04rem;
   font-size: 0.28rem;
   font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.badge-label {
+  color: #D4AF37;
+}
+
+.badge-divider {
+  width: 1px;
+  height: 0.24rem;
+  background: rgba(212, 175, 55, 0.5);
+}
+
+.badge-no {
+  color: #FFFFFF;
+  font-family: 'SF Mono', 'Monaco', monospace;
   letter-spacing: 0.04em;
 }
 
+// 圆环区
+.score-circle-section {
+  position: relative;
+  z-index: 2;
+  margin-top: 0.64rem;
+}
+
+.circle-top-label {
+  font-size: 0.32rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: rgba(212, 175, 55, 0.9);
+  margin-bottom: 0.16rem;
+}
+
 .score-circle-wrap {
-  margin: 0.64rem auto 0.4rem;
+  margin: 0.32rem auto;
   display: flex;
   justify-content: center;
 }
@@ -330,41 +410,103 @@ onMounted(() => {
   font-size: 1.6rem;
   font-weight: 800;
   line-height: 1;
+  letter-spacing: 0.04em;
 }
 
 .risk-tag {
-  font-size: 0.32rem;
+  font-size: 0.3rem;
   font-weight: 700;
 }
 
+.circle-bottom-label {
+  font-size: 0.24rem;
+  font-weight: 600;
+  letter-spacing: 0.48em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.16rem;
+}
+
 .score-desc {
-  margin-top: 0.4rem;
-  font-size: 0.34rem;
+  position: relative;
+  z-index: 2;
+  margin-top: 0.32rem;
+  font-size: 0.32rem;
   line-height: 1.6;
   opacity: 0.9;
   padding: 0 0.4rem;
 }
 
-// 银行列表卡
+.hero-divider {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.24rem;
+  margin-top: 0.4rem;
+}
+
+.divider-line {
+  width: 1.2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D4AF37);
+}
+
+.divider-line:last-child {
+  background: linear-gradient(90deg, #D4AF37, transparent);
+}
+
+.divider-diamond {
+  font-size: 0.24rem;
+  color: #D4AF37;
+  line-height: 1;
+}
+
+// ============================================
+// 银行列表卡（金边）
+// ============================================
 .banks-card {
-  margin: -0.8rem 0.4rem 0;
+  position: relative;
+  margin: -0.64rem 0.4rem 0;
   padding: 0.4rem 0;
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
+  border-top: 0.08rem solid #D4AF37;
   border-radius: 0.16rem;
-  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.08);
-  position: relative;
-  z-index: 2;
+  box-shadow: 0 8px 32px rgba(21, 101, 192, 0.1);
+  z-index: 3;
 }
 
 .banks-title {
   display: flex;
   align-items: center;
   gap: 0.16rem;
-  padding: 0 0.4rem 0.32rem;
+  padding: 0.16rem 0.4rem 0.32rem;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.title-icon {
+  display: inline-flex;
   font-size: 0.42rem;
+
+  :deep(.van-icon) {
+    color: #D4AF37;
+  }
+}
+
+.title-text {
+  font-size: 0.4rem;
   font-weight: 700;
   color: #1F2937;
+  letter-spacing: 0.04em;
+}
+
+.title-tag {
+  margin-left: auto;
+  font-size: 0.22rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #9CA3AF;
 }
 
 :deep(.banks-card .van-cell-group--inset) {
@@ -373,6 +515,17 @@ onMounted(() => {
 
 :deep(.bank-cell.van-cell) {
   padding: 0.32rem 0.4rem;
+
+  & + .van-cell {
+    border-top: 1px solid #F0F2F5;
+  }
+}
+
+.bank-icon-svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-right: 0.24rem;
+  flex-shrink: 0;
 }
 
 :deep(.bank-cell .van-cell__title) {
@@ -381,16 +534,16 @@ onMounted(() => {
   color: #1F2937;
 }
 
-:deep(.bank-cell .van-cell__label) {
-  font-size: 0.28rem;
-  color: #6B7280;
-  margin-top: 0.08rem;
+.bank-name {
+  font-size: 0.4rem;
+  font-weight: 700;
+  color: #1F2937;
 }
 
-:deep(.bank-cell .van-cell__left-icon) {
-  font-size: 0.56rem;
-  color: #1565C0;
-  margin-right: 0.24rem;
+.bank-sub {
+  font-size: 0.26rem;
+  color: #9CA3AF;
+  margin-top: 0.04rem;
 }
 
 .bank-score-wrap {
@@ -403,20 +556,26 @@ onMounted(() => {
   font-size: 0.56rem;
   font-weight: 800;
   line-height: 1;
+  letter-spacing: 0.02em;
 }
 
-// 操作按钮（纯银行蓝）
+.bank-tag {
+  font-size: 0.26rem;
+  font-weight: 600;
+}
+
+// 操作按钮
 .actions {
   margin: 0.48rem 0.4rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.24rem;
 }
 
 .action-btn {
   height: 1.28rem;
   font-size: 0.42rem;
   font-weight: 700;
+  background: #1565C0 !important;
+  border: 0.04rem solid #D4AF37 !important;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
 
   :deep(.van-icon) {
     margin-right: 0.16rem;
@@ -435,7 +594,7 @@ onMounted(() => {
   color: #6B7280;
 
   :deep(.van-icon) {
-    color: #1565C0;
+    color: #D4AF37;
     font-size: 0.32rem;
   }
 }
