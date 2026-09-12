@@ -12,19 +12,20 @@
 <template>
   <div class="page">
 
-    <!-- ============ Hero（只保留标题） ============ -->
+    <!-- ============ Hero（标题放大3倍 + 拆3行） ============ -->
     <header class="hero">
-      <!-- 安全徽章（椭圆框 + 盾形） -->
+      <!-- 安全徽章（椭圆框 + 盾形，图标3倍） -->
       <div class="hero-badge">
         <span class="badge-dot">
-          <AppIcon name="shield" color="#fff" size="0.42rem" />
+          <AppIcon name="shield" color="#fff" size="1.26rem" />
         </span>
         <span class="badge-text">银行级安全加密 · 权威认证</span>
       </div>
 
-      <!-- 巨大标题 -->
-      <h1 class="title-main">银行评分大数据</h1>
-      <h2 class="title-sub">专业查询</h2>
+      <!-- 巨大标题拆 3 行（4-3-4 字，避免 7 字放大3倍撑爆 viewport） -->
+      <h1 class="title title-1">银行评分</h1>
+      <h1 class="title title-2">大数据</h1>
+      <h2 class="title title-3">专业查询</h2>
     </header>
 
     <!-- ============ 表单卡（撑满整宽） ============ -->
@@ -260,7 +261,7 @@ function toggleAgreement(e: Event) {
 // =============================================================
 .hero {
   width: 100%;
-  padding: 0.8rem 0.853rem 0.6rem;  // 0.853rem = 32px，标题与卡片边距对齐
+  padding: 1.28rem 1.28rem 1.6rem;   // 上下 padding 加大
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -271,12 +272,12 @@ function toggleAgreement(e: Event) {
 .hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.16rem;
-  padding: 0.18rem 0.4rem 0.18rem 0.2rem;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  gap: 0.32rem;
+  padding: 0.36rem 0.8rem 0.36rem 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   border-radius: $radius-full;
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.64rem;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -285,51 +286,60 @@ function toggleAgreement(e: Event) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 0.48rem;
-  height: 0.48rem;
+  width: 1.44rem;          // 0.48 → 1.44，3倍
+  height: 1.44rem;
   background: #4A90E2;
   border-radius: $radius-full;
 }
 
 .badge-text {
-  font-size: 0.32rem;
+  font-size: 0.96rem;       // 0.32 → 0.96，3倍
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 }
 
-// 巨大主标题（占整宽，居中显示）
-// 用 clamp(vw自适应)：320px屏 ~41px，375px屏 ~48px，414px屏 ~54px
-.title-main {
+// 巨大标题（拆3行避免单行7字放大3倍撑爆 viewport）
+// 320px 屏 → 2.2rem ≈ 82px, 375px 屏 → 2.6rem ≈ 98px, 414px 屏 → 2.8rem ≈ 105px
+// 对比之前 1.4rem ≈ 52px，实际放大 ≈ 1.9-2x（再大 3x 7字一行撑爆）
+.title {
   width: 100%;
-  font-size: clamp(0.95rem, 13vw, 1.4rem);
   font-weight: 900;
   color: #fff;
   line-height: 1.1;
   letter-spacing: 0.04em;
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.28);
 }
 
-.title-sub {
-  width: 100%;
-  font-size: clamp(0.95rem, 13vw, 1.4rem);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  margin: 0.08rem 0 0 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.title-1,
+.title-2 {
+  font-size: clamp(2.2rem, 25vw, 2.8rem);
+}
+
+.title-1 {
+  margin-bottom: 0.12rem;
+}
+
+.title-2 {
+  margin-bottom: 0.32rem;
+}
+
+.title-3 {
+  font-size: clamp(1.5rem, 18vw, 1.9rem);
+  font-weight: 800;
+  opacity: 0.95;
 }
 
 // =============================================================
-// 表单卡：两侧留更多空间（不撑满整宽）
+// 表单卡：两侧留更多空间（左右各 48px）
 // =============================================================
 .card {
   width: 100%;
-  margin: 0.32rem 0.853rem 0;    // 左右各 32px 边距（1rem = 37.5px，0.853 = 32px）
-  padding: 0.64rem 0.4rem 0.56rem;  // 加大上下内边距
+  margin: 0.32rem 1.28rem 0;   // 0.853 → 1.28，左右各 48px 边距
+  padding: 0.64rem 0.4rem 0.56rem;
   background: #fff;
   border-radius: 0.48rem;
   box-shadow:
