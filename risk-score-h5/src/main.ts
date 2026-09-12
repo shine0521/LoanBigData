@@ -11,6 +11,9 @@ import App from './App.vue'
 import 'vant/lib/index.css'
 
 // 创建 Vue 实例
+// 部署验证标记：浏览器控制台执行 H5_BUILD_TS 可确认是否最新构建
+// eslint-disable-next-line no-console
+console.log('[H5] build tag = c52a26d-fix2, loaded at', new Date().toISOString())
 const app = createApp(App)
 
 // 注册 Pinia

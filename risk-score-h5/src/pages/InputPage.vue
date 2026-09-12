@@ -107,12 +107,14 @@
         <p class="warning-emph">所有要求你进行汇款、转账、非法刷单、买理财、承诺包下款的操作，都是诈骗！</p>
       </div>
 
-      <!-- 协议（原生 checkbox appearance:none 直接做样式，零事件冲突） -->
+      <!-- 协议（不使用 v-model，改用 :checked + @click，主动 toggle，零事件依赖） -->
       <label class="agreement">
         <input
-          v-model="agreed"
           type="checkbox"
           class="agreement-native"
+          :checked="agreed"
+          @click="toggleAgreement"
+          @change="toggleAgreement"
         />
         <span class="agreement-text">
           我已阅读并同意
@@ -268,6 +270,17 @@ const toastMsg = ref('')
 function showToast(msg: string, duration = 2500) {
   toastMsg.value = msg
   setTimeout(() => { toastMsg.value = '' }, duration)
+}
+
+// 协议勾选：不依赖原生 change 事件，@click 主动 toggle 最稳妥
+function toggleAgreement(e: Event) {
+  const target = e.target as HTMLInputElement | null
+  if (target) {
+    // 用浏览器翻转后的 checked 作为真值（click 事件后 native 已翻）
+    agreed.value = target.checked
+  } else {
+    agreed.value = !agreed.value
+  }
 }
 </script>
 
@@ -588,30 +601,35 @@ function showToast(msg: string, duration = 2500) {
   flex-shrink: 0;
   appearance: none;
   -webkit-appearance: none;
-  width: 0.56rem;     // 21px 勾选框
-  height: 0.56rem;
+  width: 0.6rem;      // 22.5px 勾选框（比 21px 更大 tap target）
+  height: 0.6rem;
   margin: 0.06rem 0 0 0;
   border: 1.5px solid #C8C8C8;
-  border-radius: 0.08rem;
+  border-radius: 0.09rem;
   background: #fff;
   cursor: pointer;
   position: relative;
   transition: all $duration-fast;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  // 关键：确保 input 不被 flex 挤压，始终 22.5px 见方
+  display: inline-block;
+  vertical-align: middle;
+  // 双击禁用（移动端反复点误触）
+  touch-action: manipulation;
 
   &:checked {
     background: $color-primary;
     border-color: $color-primary;
 
-    // CSS 画勾（教程 1.4 dpr-safe：用 border + rotate 不用图片）
+    // CSS 画勾（用 border + rotate，不依赖图片，dpr-safe）
     &::after {
       content: '';
       position: absolute;
-      left: 0.18rem;
+      left: 0.2rem;
       top: 0.08rem;
-      width: 0.12rem;
-      height: 0.24rem;
+      width: 0.13rem;
+      height: 0.26rem;
       border: solid #fff;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
