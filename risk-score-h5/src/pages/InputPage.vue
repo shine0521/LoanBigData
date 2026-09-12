@@ -133,17 +133,18 @@
       </div>
 
       <!-- 提交按钮 -->
-      <van-button
-        block
-        round
-        type="primary"
-        class="submit-btn"
-        :loading="submitting"
-        loading-text="提交中..."
-        @click="onSubmit"
-      >
-        立即查询
-      </van-button>
+      <div class="submit-wrap">
+        <van-button
+          round
+          type="primary"
+          class="submit-btn"
+          :loading="submitting"
+          loading-text="提交中..."
+          @click="onSubmit"
+        >
+          立即查询
+        </van-button>
+      </div>
 
       <!-- 底部信任标识 -->
       <div class="footer-trust">
@@ -313,10 +314,11 @@ function onViewAgreement() {
 
 .hero-title {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.16rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   line-height: 1.2;
+  white-space: nowrap;
   // 标题字效：白色微渐变（不算 UI 渐变，只是文字字效）
   background: linear-gradient(180deg, #FFFFFF 0%, #E8F0FE 100%);
   -webkit-background-clip: text;
@@ -535,13 +537,20 @@ function onViewAgreement() {
   font-weight: 600;
 }
 
-// 提交按钮（纯银行蓝 + 金色描边）
+// 提交按钮包装（居中 + 缩短）
+.submit-wrap {
+  text-align: center;
+  margin: 0.56rem 0 0.32rem;
+}
+
+// 提交按钮（纯银行蓝 + 金色描边，居中缩短）
 .submit-btn {
-  margin: 0.48rem 0.4rem 0.32rem;
-  height: 1.28rem;
-  font-size: 0.42rem;
+  display: inline-flex !important;
+  width: 4rem !important;
+  height: 1.2rem !important;
+  font-size: 0.4rem !important;
   font-weight: 700;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.16em;
   background: #1565C0 !important;
   border: 0.04rem solid #D4AF37 !important;
   box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);

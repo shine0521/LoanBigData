@@ -16,7 +16,7 @@
     <!-- 加载中 -->
     <template v-if="loading">
       <div class="loading-wrap">
-        <van-loading type="spinner" size="36" color="#1565C0" vertical>
+        <van-loading type="spinner" size="72" color="#1565C0" vertical>
           <span class="loading-text">正在查询评分...</span>
         </van-loading>
         <div class="loading-tips">查询需要 5-10 秒，请耐心等待</div>
@@ -56,8 +56,8 @@
               v-model:current-rate="rate"
               :rate="rate"
               :speed="100"
-              :stroke-width="80"
-              size="240"
+              :stroke-width="60"
+              size="280"
               :color="circleColor"
               layer-color="rgba(255, 255, 255, 0.15)"
               :clockwise="false"
@@ -299,19 +299,20 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3.2rem 0.8rem;
+  padding: 4.8rem 0.8rem;
 }
 
 .loading-text {
-  font-size: 0.42rem;
+  font-size: 0.84rem;
   color: #1565C0;
-  font-weight: 600;
-  margin-top: 0.32rem;
+  font-weight: 700;
+  margin-top: 0.64rem;
+  letter-spacing: 0.08em;
 }
 
 .loading-tips {
-  margin-top: 0.32rem;
-  font-size: 0.32rem;
+  margin-top: 0.48rem;
+  font-size: 0.4rem;
   color: #6B7280;
 }
 
@@ -403,14 +404,16 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.16rem;
+  padding: 0 0.4rem;
 }
 
 .score-num {
-  font-size: 1.6rem;
+  font-size: 1.28rem;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 .risk-tag {
@@ -514,7 +517,7 @@ onMounted(() => {
 }
 
 :deep(.bank-cell.van-cell) {
-  padding: 0.32rem 0.4rem;
+  padding: 0.4rem 0.4rem;
 
   & + .van-cell {
     border-top: 1px solid #F0F2F5;
@@ -522,22 +525,23 @@ onMounted(() => {
 }
 
 .bank-icon-svg {
-  width: 0.8rem;
-  height: 0.8rem;
-  margin-right: 0.24rem;
+  width: 1.04rem;
+  height: 1.04rem;
+  margin-right: 0.32rem;
   flex-shrink: 0;
 }
 
 :deep(.bank-cell .van-cell__title) {
-  font-size: 0.4rem;
-  font-weight: 600;
+  font-size: 0.42rem;
+  font-weight: 700;
   color: #1F2937;
 }
 
 .bank-name {
-  font-size: 0.4rem;
+  font-size: 0.42rem;
   font-weight: 700;
   color: #1F2937;
+  letter-spacing: 0.04em;
 }
 
 .bank-sub {
@@ -553,14 +557,14 @@ onMounted(() => {
 }
 
 .bank-score {
-  font-size: 0.56rem;
+  font-size: 0.64rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
 }
 
 .bank-tag {
-  font-size: 0.26rem;
+  font-size: 0.28rem;
   font-weight: 600;
 }
 
