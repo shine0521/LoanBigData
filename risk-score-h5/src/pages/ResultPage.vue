@@ -99,6 +99,7 @@
             <van-icon name="gold-coin-o" color="#D4AF37" />
           </span>
           <span class="title-text">四大行评分</span>
+          <span class="title-tag">FOUR BANKS</span>
         </div>
 
         <van-cell-group inset>
@@ -113,9 +114,6 @@
             </template>
             <template #title>
               <div class="bank-name">{{ bank.bankName }}</div>
-            </template>
-            <template #label>
-              <div class="bank-sub">个人信用 · 专业评估</div>
             </template>
             <template #value>
               <div class="bank-score-wrap">
@@ -538,6 +536,14 @@ onMounted(() => {
   font-weight: 700;
   color: #1F2937;
   letter-spacing: 0.04em;
+}
+
+.title-tag {
+  margin-left: auto;
+  font-size: 0.22rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #9CA3AF;
 }
 
 :deep(.banks-card .van-cell-group--inset) {
