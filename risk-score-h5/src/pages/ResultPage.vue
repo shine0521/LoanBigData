@@ -19,7 +19,9 @@
         <van-loading type="spinner" size="72" color="#1565C0" vertical>
           <span class="loading-text">正在查询评分...</span>
         </van-loading>
-        <div class="loading-tips">查询需要 5-10 秒，请耐心等待</div>
+        <div class="loading-tips">
+          查询需要 <span class="loading-count">{{ countdown }}</span> 秒，请耐心等待
+        </div>
       </div>
     </template>
 
@@ -56,8 +58,8 @@
               v-model:current-rate="rate"
               :rate="rate"
               :speed="100"
-              :stroke-width="80"
-              size="380"
+              :stroke-width="40"
+              size="190"
               :color="circleColor"
               layer-color="rgba(255, 255, 255, 0.15)"
               :clockwise="false"
@@ -188,6 +190,7 @@ const router = useRouter()
 const store = useRiskStore()
 
 const loading = ref(true)
+const countdown = ref(0)
 
 const comprehensive = computed(() => store.getComprehensive())
 const banks = computed(() => store.getBanks())
@@ -245,8 +248,17 @@ function mockQuery() {
   loading.value = true
   rate.value = 0
 
-  const delay = 5000 + Math.random() * 5000
+  // 20-30 秒随机加载
+  const total = 20000 + Math.floor(Math.random() * 11000)
+  countdown.value = Math.ceil(total / 1000)
+
+  // 每秒倒数
+  const interval = setInterval(() => {
+    countdown.value = Math.max(0, countdown.value - 1)
+  }, 1000)
+
   setTimeout(() => {
+    clearInterval(interval)
     const compScore = 600 + Math.floor(Math.random() * 51)
     const bankList = ['boc', 'icbc', 'abc', 'ccb'].map((t) => ({
       scoreType: t as 'boc' | 'icbc' | 'abc' | 'ccb',
@@ -271,7 +283,7 @@ function mockQuery() {
     setTimeout(() => {
       rate.value = Math.min(100, (compScore / 1000) * 100)
     }, 100)
-  }, delay)
+  }, total)
 }
 
 onMounted(() => {
@@ -319,6 +331,20 @@ onMounted(() => {
   margin-top: 0.48rem;
   font-size: 0.4rem;
   color: #6B7280;
+}
+
+.loading-count {
+  display: inline-block;
+  margin: 0 0.08rem;
+  padding: 0 0.16rem;
+  min-width: 0.56rem;
+  text-align: center;
+  font-size: 0.44rem;
+  font-weight: 800;
+  color: #1565C0;
+  background: rgba(21, 101, 192, 0.08);
+  border: 0.02rem solid #1565C0;
+  border-radius: 0.04rem;
 }
 
 // ============================================
@@ -411,25 +437,25 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.24rem;
+  gap: 0.12rem;
   width: 100%;
   height: 100%;
-  padding: 0 0.4rem;
+  padding: 0 0.2rem;
 }
 
 .score-num {
-  font-size: 3rem;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
   // 下移一点偏中间偏下
-  margin-top: 0.16rem;
+  margin-top: 0.08rem;
 }
 
 .risk-tag {
-  font-size: 0.32rem;
+  font-size: 0.22rem;
   font-weight: 700;
-  padding: 0.04rem 0.24rem;
+  padding: 0.02rem 0.16rem;
 }
 
 .circle-bottom-label {
